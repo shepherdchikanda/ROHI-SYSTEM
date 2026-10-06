@@ -173,3 +173,23 @@ Stage Summary:
 - 12 features implemented & verified: WhatsApp button, chat→contact handoff (transcript saved to DB, form prefilled), insight article pages, FAQ accordion, engagement page, newsletter form (subscriber saved), page transitions, scroll progress + back-to-top, dark mode toggle (VLM-verified), sitemap, analytics events (7+ logged), chatbot conversation persistence (localStorage)
 - Verified via Agent Browser: dark mode toggle works (.dark class), chat handoff prefills form + shows banner + saves transcript, newsletter subscribes (DB record), FAQ accordion, scroll progress bar, back-to-top, page navigation, WhatsApp button present
 - REMINDERS for user: WhatsApp number is placeholder (+258 84 000 0000), email is placeholder (hello@rohi.systems), address is placeholder — all in src/lib/site-config.ts (one-file update)
+
+---
+Task ID: 26
+Agent: Main orchestrator
+Task: Replace chatbot system prompt with refined knowledge-base-grounded version + build real ROHI knowledge base
+
+Work Log:
+- Replaced src/lib/rohi-agent-prompt.ts with the authoritative refined prompt (knowledge-base-grounded: primary objective, knowledge rules, business-first rule, communication, response length, pricing rules, products/FIMS stance, security, competitors, human handoff, lead context, no-invention rule, core identity, final principle)
+- Built src/lib/rohi-knowledge-base.ts — confirmed-facts-only KB compiled from brand spec + live website content (15 sections: identity, what ROHI is/isn't, capabilities, methodology, solutions, approach principles, engagement model, products/FIMS stance, case studies status, insights, Mozambique context, website nav, AI principle, trust, fallback phrasing). No invented clients/metrics/pricing/FIMS features
+- Updated /api/chat to inject BOTH the system prompt AND the knowledge base as two system messages, with instruction to treat KB as source of truth and never invent beyond it
+
+Stage Summary:
+- Lint passes (exit 0), no runtime errors
+- Verified via API + Agent Browser UI:
+  * FIMS question → accurate KB answer (controlled development, no invented features) ✓
+  * Clients/results question → honest fallback "I don't have enough confirmed information about that yet" (no invented clients) ✓
+  * Pricing question → explained factors (scope, complexity, integrations, users, workflows, data, automation, AI, security, desired outcomes), no invented quote, guided to conversation ✓
+  * Portuguese question → responded naturally in PT ✓
+  * Methodology question via chat widget → accurate 6-step list from KB ✓
+- The "connected knowledge base" referenced in the prompt is now REAL (not aspirational) — the assistant grounds in confirmed ROHI facts and falls back honestly for anything outside the KB
