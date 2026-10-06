@@ -14,7 +14,7 @@ const FOOTER_NAV = [
 const LEGAL = [
   { label: "Privacy", href: "/contact" },
   { label: "Terms", href: "/contact" },
-];
+] as const;
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -70,7 +70,7 @@ export function SiteFooter() {
           <div className="flex items-center gap-5">
             {LEGAL.map((item) => (
               <Link
-                key={item.href}
+                key={item.label}
                 href={item.href}
                 className="font-mono-tech text-[11px] uppercase tracking-[0.18em] text-white/40 transition-colors hover:text-teal"
               >
