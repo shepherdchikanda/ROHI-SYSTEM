@@ -1,0 +1,204 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-manrope);
+  --font-mono: var(--font-jetbrains-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* ROHI brand tokens */
+  --color-navy: var(--navy);
+  --color-navy-soft: var(--navy-soft);
+  --color-teal: var(--teal);
+  --color-teal-soft: var(--teal-soft);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-cloud: var(--cloud);
+}
+
+:root {
+  /* Radius */
+  --radius: 0.5rem;
+
+  /* ROHI brand palette */
+  --navy: #0B1220;            /* Deep Navy — hero / footer / dark sections */
+  --navy-soft: #111a2e;       /* Slightly lifted navy for layered surfaces */
+  --teal: #20C7C9;            /* Electric Teal — accent, indicators */
+  --teal-soft: #1AA9AB;       /* Deeper teal for hover / pressed */
+  --ink: #111827;             /* Primary text */
+  --ink-soft: #667085;        /* Secondary text */
+  --cloud: #F5F7FA;           /* Light surface */
+
+  /* Semantic mapping (light theme) */
+  --background: #FFFFFF;
+  --foreground: #111827;
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
+  --primary: #0B1220;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F5F7FA;
+  --secondary-foreground: #0B1220;
+  --muted: #F5F7FA;
+  --muted-foreground: #667085;
+  --accent: #20C7C9;
+  --accent-foreground: #0B1220;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #E6E8EC;
+  --input: #E6E8EC;
+  --ring: #20C7C9;
+  --chart-1: #0B1220;
+  --chart-2: #20C7C9;
+  --chart-3: #667085;
+  --chart-4: #111827;
+  --chart-5: #F5F7FA;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #111827;
+  --sidebar-primary: #0B1220;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F5F7FA;
+  --sidebar-accent-foreground: #0B1220;
+  --sidebar-border: #E6E8EC;
+  --sidebar-ring: #20C7C9;
+}
+
+.dark {
+  --background: #0B1220;
+  --foreground: #FFFFFF;
+  --card: #111a2e;
+  --card-foreground: #FFFFFF;
+  --popover: #111a2e;
+  --popover-foreground: #FFFFFF;
+  --primary: #20C7C9;
+  --primary-foreground: #0B1220;
+  --secondary: #1a2336;
+  --secondary-foreground: #FFFFFF;
+  --muted: #1a2336;
+  --muted-foreground: #9aa6b8;
+  --accent: #20C7C9;
+  --accent-foreground: #0B1220;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: #1f2a3f;
+  --input: #1f2a3f;
+  --ring: #20C7C9;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background-color: rgba(32, 199, 201, 0.25);
+    color: #0B1220;
+  }
+}
+
+/* ROHI utility helpers */
+@layer utilities {
+  .font-mono-tech {
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+    font-feature-settings: "ss01", "cv01";
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  /* Subtle grid pattern for dark sections */
+  .bg-navy-grid {
+    background-color: #0B1220;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .bg-cloud-grid {
+    background-color: #F5F7FA;
+    background-image:
+      linear-gradient(to right, rgba(11,18,32,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11,18,32,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .teal-underline {
+    background-image: linear-gradient(to right, #20C7C9, #20C7C9);
+    background-repeat: no-repeat;
+    background-size: 100% 2px;
+    background-position: 0 100%;
+  }
+}
+
+/* Custom scrollbar for long lists */
+.scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: rgba(102, 112, 133, 0.35);
+  border-radius: 9999px;
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 112, 133, 0.6);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
