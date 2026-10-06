@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { SiteHeader } from "@/components/rohi/site-header";
+import { SiteFooter } from "@/components/rohi/site-footer";
+import { ChatWidget } from "@/components/rohi/chat/chat-widget";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -84,8 +87,22 @@ export default function RootLayout({
       <body
         className={`${manrope.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
+        <div className="flex min-h-screen flex-col">
+          {/* Skip link */}
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-navy focus:px-4 focus:py-2 focus:text-sm focus:text-white"
+          >
+            Skip to content
+          </a>
+          <SiteHeader />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <SiteFooter />
+        </div>
         <Toaster />
+        <ChatWidget />
       </body>
     </html>
   );

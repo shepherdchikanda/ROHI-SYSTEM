@@ -12,7 +12,7 @@ import { Section, Container, SectionHeader, Eyebrow } from "../section-primitive
  */
 export function ProductsSection() {
   return (
-    <Section id="products" tone="light" className="py-20 sm:py-28 lg:py-32">
+    <Section id="products" tone="light" className="pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-32">
       <Container>
         <SectionHeader
           number="10"
@@ -104,7 +104,7 @@ export function ProductsSection() {
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <a
-                  href="#contact"
+                  href="/contact"
                   className="group inline-flex items-center gap-2 text-sm font-semibold text-navy transition-colors hover:text-teal"
                 >
                   Talk to us about FIMS

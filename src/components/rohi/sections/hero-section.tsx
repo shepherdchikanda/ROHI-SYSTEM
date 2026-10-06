@@ -251,11 +251,11 @@ export function HeroSection() {
               transition={{ duration: 0.7, delay: 0.24, ease: "easeOut" }}
               className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
             >
-              <RohiButton href="#contact" variant="primary" size="lg">
+              <RohiButton href="/contact" variant="primary" size="lg">
                 Start a Conversation
               </RohiButton>
               <RohiButton
-                href="#capabilities"
+                href="/solutions"
                 variant="outlineLight"
                 size="lg"
                 withArrow={false}

@@ -136,7 +136,7 @@ export function SolutionsSection() {
   const Icon = current.icon;
 
   return (
-    <Section id="solutions" tone="cloud" className="py-20 sm:py-28 lg:py-32">
+    <Section id="solutions" tone="cloud" className="pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-32">
       <Container>
         <SectionHeader
           number="09"
@@ -278,7 +278,7 @@ export function SolutionsSection() {
               <p className="font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink-soft/60">
                 Fig. 09 — {current.label} · scoped to your context
               </p>
-              <RohiButton href="#contact" variant="ghost" size="sm">
+              <RohiButton href="/contact" variant="ghost" size="sm">
                 Describe your challenge
               </RohiButton>
             </div>

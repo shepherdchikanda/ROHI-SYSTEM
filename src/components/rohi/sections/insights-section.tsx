@@ -45,7 +45,7 @@ const TOPICS = [
 
 export function InsightsSection() {
   return (
-    <Section id="insights" tone="cloud" className="py-20 sm:py-28 lg:py-32">
+    <Section id="insights" tone="cloud" className="pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-32">
       <Container>
         <SectionHeader
           number="13"

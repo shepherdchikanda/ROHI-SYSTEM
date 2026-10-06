@@ -18,7 +18,7 @@ const FOCUS = [
 
 export function CustomSystemsSection() {
   return (
-    <Section id="custom-systems" tone="navy" className="overflow-hidden py-20 sm:py-28 lg:py-32">
+    <Section id="custom-systems" tone="navy" className="overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-32">
       <div className="absolute inset-0 bg-navy-grid opacity-50" aria-hidden />
       <div
         className="pointer-events-none absolute -left-32 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-teal/10 blur-[120px]"
@@ -46,7 +46,7 @@ export function CustomSystemsSection() {
               architecture.
             </p>
             <div className="mt-9">
-              <RohiButton href="#contact" variant="primary" size="lg">
+              <RohiButton href="/contact" variant="primary" size="lg">
                 Start a Conversation
               </RohiButton>
             </div>

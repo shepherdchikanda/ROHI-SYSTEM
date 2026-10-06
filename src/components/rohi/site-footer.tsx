@@ -1,19 +1,19 @@
 import Link from "next/link";
-import { RohiMark } from "./rohi-mark";
+import { RohiLogo } from "./rohi-logo";
 
 const FOOTER_NAV = [
-  { label: "Solutions", href: "#solutions" },
-  { label: "Products", href: "#products" },
-  { label: "Approach", href: "#approach" },
-  { label: "Case Studies", href: "#case-studies" },
-  { label: "Insights", href: "#insights" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Solutions", href: "/solutions" },
+  { label: "Products", href: "/products" },
+  { label: "Approach", href: "/approach" },
+  { label: "Case Studies", href: "/case-studies" },
+  { label: "Insights", href: "/insights" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const LEGAL = [
-  { label: "Privacy", href: "#privacy" },
-  { label: "Terms", href: "#terms" },
+  { label: "Privacy", href: "/contact" },
+  { label: "Terms", href: "/contact" },
 ];
 
 export function SiteFooter() {
@@ -24,13 +24,8 @@ export function SiteFooter() {
         {/* Top — brand statement */}
         <div className="grid gap-12 border-b border-white/10 py-14 lg:grid-cols-12 lg:py-20">
           <div className="lg:col-span-5">
-            <div className="flex items-center gap-2.5">
-              <RohiMark size={32} tone="light" />
-              <span className="font-sans text-base font-bold uppercase tracking-[0.04em]">
-                ROHI <span className="text-white/55">SYSTEMS</span>
-              </span>
-            </div>
-            <p className="mt-6 font-sans text-2xl font-bold leading-tight tracking-[-0.02em] sm:text-3xl">
+            <RohiLogo tone="light" height={44} />
+            <p className="mt-8 font-sans text-2xl font-bold leading-tight tracking-[-0.02em] sm:text-3xl">
               Technology That Moves Business.
             </p>
             <p className="mt-3 font-mono-tech text-[11px] uppercase tracking-[0.18em] text-teal">

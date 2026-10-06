@@ -59,3 +59,42 @@ Stage Summary:
 - Mobile responsive verified at 390x844 + desktop at 1440x900
 - Sticky footer verified at bottom of long page
 - All ROHI brand constraints honored: no invented clients/metrics/testimonials, FIMS as controlled placeholder, case studies as polished placeholder, insights as planned topics
+
+---
+Task ID: 24
+Agent: Main orchestrator
+Task: Add user's logo, convert site to multi-page navigation, build ROHI AI chatbot
+
+Work Log:
+- Logo integration:
+  * Analyzed uploaded logo (Gemini_Generated_Image...jfif) with VLM — 3D geometric mark + teal hexagon + company text on dark charcoal bg
+  * Generated transparent version via z-ai image-edit SDK (scripts/make-transparent-logo.ts)
+  * Created dark-mark-on-transparent version for light header (scripts/remove-bg.ts — sharp chroma-key, 89.2% pixels transparent)
+  * Created white-mark+teal version for navy footer (scripts/make-light-logo.ts — luminance inversion keeping teal)
+  * Built RohiLogo component (next/image, tone="dark"|"light")
+  * Integrated into SiteHeader (dark version, 44px) and SiteFooter (light version, 44px)
+  * NOTE: VLM reads logo text as "EL ROI SYSTEMS" or "ROHI" depending on size — flagged to user for clarification
+
+- Multi-page restructure (user requested pages instead of scroll):
+  * Created 7 route folders: /solutions, /products, /approach, /case-studies, /insights, /about, /contact
+  * Moved SiteHeader + SiteFooter into root layout.tsx (shared across all pages) with min-h-screen flex-col sticky-footer wrapper
+  * Updated SiteHeader nav to use Next Link with pathname-based active state; mobile menu closes on link click
+  * Made header always-solid (bg-background/80 backdrop-blur) so it's readable on both light and navy pages
+  * Bumped top padding on 7 page-first sections to clear the fixed header
+  * Trimmed home page to: Hero + Problem + Capabilities + Why ROHI + CtaBand
+  * Created reusable CtaBand closing CTA (navy, used on all inner pages)
+  * Updated internal links from #anchors to /routes
+  * Each page has its own metadata (title + description + canonical)
+
+- ROHI AI chatbot (per detailed 75-section agent spec):
+  * Wrote ROHI_AGENT_SYSTEM_PROMPT (src/lib/rohi-agent-prompt.ts) encoding: identity, capabilities, AI principle (understand first), discovery questions, solution guidance, no-overpromise, pricing stance, FIMS/product stance, Mozambique context, human-handoff triggers, lead handoff, security, knowledge boundaries, Portuguese language rule, conversation flow
+  * Built /api/chat streaming route: parses upstream SSE, emits plain-text deltas, robust double-close guard + AbortController support
+  * Built ChatWidget floating UI: bottom-right button, animated panel, welcome message, 5 quick-option chips, streaming message bubbles with typing indicator, reset conversation, /contact handoff link, Enter-to-send, Esc-to-close, auto-scroll, appears on ALL pages via layout
+  * Fixed streaming controller double-close bug (ERR_INVALID_STATE)
+
+Stage Summary:
+- All 8 routes return 200, lint passes (exit 0), no runtime errors
+- Logo visible & readable in header (dark) and footer (white) across all pages
+- Multi-page nav verified: desktop + mobile menu, active states, URL updates
+- Chatbot verified: streams responses, switches to Portuguese automatically, asks qualifying discovery questions (not over-promising), offers /contact handoff, works on inner pages
+- Agent Browser + VLM confirm visual quality maintained

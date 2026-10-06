@@ -13,7 +13,7 @@ import { RohiButton } from "../rohi-button";
  */
 export function CaseStudiesSection() {
   return (
-    <Section id="case-studies" tone="cloud" className="py-20 sm:py-28 lg:py-32">
+    <Section id="case-studies" tone="cloud" className="pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-32">
       <Container>
         <SectionHeader
           number="11"
@@ -92,7 +92,7 @@ export function CaseStudiesSection() {
           <p className="font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink-soft/60">
             Fig. 11 — Case study framework (ready for real projects)
           </p>
-          <RohiButton href="#contact" variant="ghost" size="sm">
+          <RohiButton href="/contact" variant="ghost" size="sm">
             Discuss your project
           </RohiButton>
         </div>
