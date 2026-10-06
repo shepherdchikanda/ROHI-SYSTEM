@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { InsightsSection } from "@/components/rohi/sections/insights-section";
 import { CtaBand } from "@/components/rohi/sections/cta-band";
+import { NewsletterForm } from "@/components/rohi/sections/newsletter-form";
+import { Container } from "@/components/rohi/section-primitives";
 
 export const metadata: Metadata = {
   title: "Insights — How ROHI thinks about the work",
@@ -13,6 +15,11 @@ export default function InsightsPage() {
   return (
     <>
       <InsightsSection />
+      <section className="bg-cloud py-16 sm:py-20">
+        <Container>
+          <NewsletterForm />
+        </Container>
+      </section>
       <CtaBand
         eyebrow="Insights"
         heading="Want thinking applied to your problem?"

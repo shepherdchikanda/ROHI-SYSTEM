@@ -8,15 +8,18 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RohiLogo } from "./rohi-logo";
 import { RohiButton } from "./rohi-button";
+import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
   { label: "Home", href: "/" },
   { label: "Solutions", href: "/solutions" },
   { label: "Products", href: "/products" },
   { label: "Approach", href: "/approach" },
+  { label: "Engagement", href: "/engagement" },
   { label: "Case Studies", href: "/case-studies" },
   { label: "Insights", href: "/insights" },
   { label: "About", href: "/about" },
+  { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -113,8 +116,9 @@ export function SiteHeader() {
           })}
         </nav>
 
-        {/* CTA (desktop) */}
-        <div className="hidden lg:block">
+        {/* CTA + theme toggle (desktop) */}
+        <div className="hidden items-center gap-1 lg:flex">
+          <ThemeToggle />
           <RohiButton href="/contact" size="sm" withArrow={false}>
             Start a Conversation
           </RohiButton>

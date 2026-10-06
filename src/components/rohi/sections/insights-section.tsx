@@ -1,51 +1,46 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { Section, Container, SectionHeader } from "../section-primitives";
+import { PUBLISHED_INSIGHTS } from "@/lib/insights";
 
-const TOPICS = [
-  {
-    tag: "Systems",
-    title: "When standard software stops fitting the business",
-    desc: "How to recognize the moment custom systems become the better investment — and how to scope them without overbuilding.",
-    state: "Planned",
-  },
+// Remaining planned topics (not yet published)
+const PLANNED_TOPICS = [
   {
     tag: "Automation",
     title: "Workflows that should not depend on one person",
     desc: "Identifying the repetitive, rule-based work that automation removes cleanly — and the work it should not touch.",
-    state: "Planned",
-  },
-  {
-    tag: "AI",
-    title: "Where AI actually improves the work",
-    desc: "A practical framework for deciding where intelligence belongs in a system — and where it only adds noise.",
-    state: "Planned",
   },
   {
     tag: "Data",
     title: "Dashboards people actually use",
     desc: "Why most dashboards are unread — and how to build operational visibility around real decisions.",
-    state: "Planned",
   },
   {
     tag: "Strategy",
     title: "From services to recurring technology",
     desc: "How an African technology company can structure itself to build products, not just projects.",
-    state: "Planned",
-  },
-  {
-    tag: "Efficiency",
-    title: "The cost of fragmented information",
-    desc: "What disconnected tools actually cost an organization — beyond the obvious time lost.",
-    state: "Planned",
   },
 ];
 
+function fmtDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export function InsightsSection() {
   return (
-    <Section id="insights" tone="cloud" className="pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-32">
+    <Section
+      id="insights"
+      tone="cloud"
+      className="pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-32"
+    >
       <Container>
         <SectionHeader
           number="13"
@@ -57,13 +52,14 @@ export function InsightsSection() {
               about the work.
             </>
           }
-          lede="Insights will explain complex technology clearly, demonstrate expertise and support decisions — not chase traffic. Topics are planned; writing is in progress."
+          lede="Insights explain complex technology clearly, demonstrate expertise and support decisions — not chase traffic. More are written as the work continues."
         />
 
+        {/* Published articles */}
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {TOPICS.map((t, i) => (
+          {PUBLISHED_INSIGHTS.map((a, i) => (
             <motion.article
-              key={t.title}
+              key={a.slug}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
@@ -72,14 +68,58 @@ export function InsightsSection() {
                 delay: i * 0.06,
                 ease: "easeOut",
               }}
-              className="group relative flex flex-col gap-4 rounded-xl border border-navy/10 bg-background p-6 transition-colors hover:border-navy/20"
+            >
+              <Link
+                href={`/insights/${a.slug}`}
+                className="group flex h-full flex-col gap-4 rounded-xl border border-navy/10 bg-background p-6 transition-colors hover:border-teal/40 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-teal/40"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="rounded-full border border-navy/10 bg-cloud px-2.5 py-1 font-mono-tech text-[10px] uppercase tracking-widest text-ink-soft">
+                    {a.tag}
+                  </span>
+                  <span className="font-mono-tech text-[10px] uppercase tracking-widest text-teal">
+                    {a.readingTime}
+                  </span>
+                </div>
+                <h3 className="font-sans text-lg font-bold leading-snug tracking-[-0.01em] text-ink group-hover:text-teal">
+                  {a.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-ink-soft">
+                  {a.summary}
+                </p>
+                <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+                  <span className="font-mono-tech text-[10px] uppercase tracking-widest text-ink-soft/50">
+                    {fmtDate(a.date)}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-sm font-medium text-navy group-hover:text-teal">
+                    Read
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+              </Link>
+            </motion.article>
+          ))}
+
+          {/* Planned topics */}
+          {PLANNED_TOPICS.map((t, i) => (
+            <motion.article
+              key={t.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{
+                duration: 0.5,
+                delay: (PUBLISHED_INSIGHTS.length + i) * 0.06,
+                ease: "easeOut",
+              }}
+              className="group relative flex h-full flex-col gap-4 rounded-xl border border-dashed border-navy/15 bg-background/60 p-6"
             >
               <div className="flex items-center justify-between">
                 <span className="rounded-full border border-navy/10 bg-cloud px-2.5 py-1 font-mono-tech text-[10px] uppercase tracking-widest text-ink-soft">
                   {t.tag}
                 </span>
-                <span className="font-mono-tech text-[10px] uppercase tracking-widest text-teal">
-                  {t.state}
+                <span className="font-mono-tech text-[10px] uppercase tracking-widest text-ink-soft/50">
+                  Planned
                 </span>
               </div>
               <h3 className="font-sans text-lg font-bold leading-snug tracking-[-0.01em] text-ink">
@@ -89,17 +129,18 @@ export function InsightsSection() {
                 {t.desc}
               </p>
               <div className="mt-auto flex items-center gap-2 pt-2">
-                <span className="text-sm font-medium text-ink-soft/60">
+                <span className="text-sm font-medium text-ink-soft/50">
                   Coming soon
                 </span>
-                <ArrowUpRight className="size-4 text-ink-soft/40" />
+                <ArrowUpRight className="size-4 text-ink-soft/30" />
               </div>
             </motion.article>
           ))}
         </div>
 
         <p className="mt-10 font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink-soft/60">
-          Fig. 12 — Planned insights, written as the work continues
+          Fig. 12 — Published insights + planned topics, written as the work
+          continues
         </p>
       </Container>
     </Section>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Loader2, AlertCircle } from "lucide-react";
+import { Check, Loader2, AlertCircle, MessageSquare } from "lucide-react";
 import {
   Section,
   Container,
@@ -10,6 +10,7 @@ import {
 } from "../section-primitives";
 import { RohiButtonElement } from "../rohi-button";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/analytics";
 
 type Field = {
   name: keyof FormState;
@@ -117,6 +118,32 @@ export function ContactSection() {
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [chatContext, setChatContext] = useState<string>("");
+
+  // Read chatbot handoff context (if visitor came from "Start a Conversation").
+  // Hydration-safe: render EMPTY first, then sync sessionStorage into state.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("rohi-chat-handoff");
+      if (!raw) return;
+      const payload = JSON.parse(raw) as {
+        improving?: string;
+        conversationText?: string;
+      };
+      setValues((prev) => ({
+        ...prev,
+        improving: payload.improving
+          ? `${payload.improving}\n\n— — —\nContext from chat with ROHI assistant:\n${payload.conversationText ?? ""}`
+          : prev.improving,
+      }));
+      setChatContext(payload.conversationText ?? "from chat");
+      sessionStorage.removeItem("rohi-chat-handoff");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function update(name: keyof FormState, val: string) {
     setValues((prev) => ({ ...prev, [name]: val }));
@@ -127,6 +154,7 @@ export function ContactSection() {
     if (status === "submitting") return;
     setStatus("submitting");
     setErrorMsg("");
+    track("contact_submit", { hasChatContext: Boolean(chatContext) });
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -148,6 +176,7 @@ export function ContactSection() {
       }
       setStatus("success");
       setValues(EMPTY);
+      track("contact_success", { hasChatContext: Boolean(chatContext) });
     } catch {
       setStatus("error");
       setErrorMsg("Network error. Please try again.");
@@ -250,6 +279,23 @@ export function ContactSection() {
                     noValidate
                     className="grid gap-5"
                   >
+                    {/* Chat context banner */}
+                    {chatContext && (
+                      <div className="flex items-start gap-3 rounded-lg border border-teal/30 bg-teal/5 px-4 py-3">
+                        <MessageSquare className="mt-0.5 size-4 shrink-0 text-teal" />
+                        <div>
+                          <p className="font-sans text-sm font-semibold text-white">
+                            Context from your chat with the ROHI assistant
+                          </p>
+                          <p className="mt-1 text-sm text-white/60">
+                            We&apos;ve carried your conversation into the form
+                            so the team has the full picture — you don&apos;t
+                            need to repeat yourself. Review and add anything
+                            missing.
+                          </p>
+                        </div>
+                      </div>
+                    )}
                     <div className="grid gap-5 sm:grid-cols-2">
                       {FIELDS.slice(0, 4).map((f) => (
                         <FieldInput

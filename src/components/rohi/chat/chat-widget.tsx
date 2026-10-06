@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { MessageSquare, X, Send, ArrowUpRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { RohiLogo } from "../rohi-logo";
+import { track } from "@/lib/analytics";
 
 type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
+
+const STORAGE_KEY = "rohi-chat-messages";
+const SESSION_KEY = "rohi-chat-session";
+const HANDOFF_KEY = "rohi-chat-handoff";
 
 const QUICK_OPTIONS = [
   "Explore ROHI",
@@ -23,14 +29,51 @@ const WELCOME: Msg = {
 };
 
 export function ChatWidget() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([WELCOME]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [hasNew, setHasNew] = useState(false);
+  const [handoffBusy, setHandoffBusy] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const sessionIdRef = useRef<string>("");
+
+  // Initialise session id once
+  useEffect(() => {
+    try {
+      let sid = sessionStorage.getItem(SESSION_KEY);
+      if (!sid) {
+        sid = crypto.randomUUID();
+        sessionStorage.setItem(SESSION_KEY, sid);
+      }
+      sessionIdRef.current = sid;
+      // Restore saved conversation (localStorage)
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Msg[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+        }
+      }
+    } catch {
+      /* ignore storage errors */
+    }
+  }, []);
+
+  // Persist messages to localStorage (skip streaming partials)
+  useEffect(() => {
+    try {
+      const persistable = messages
+        .filter((m) => !(m.streaming && m.content === ""))
+        .map((m) => ({ role: m.role, content: m.content }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(persistable));
+    } catch {
+      /* ignore */
+    }
+  }, [messages]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -46,6 +89,7 @@ export function ChatWidget() {
   useEffect(() => {
     if (open) {
       setHasNew(false);
+      track("chat_open");
       setTimeout(() => inputRef.current?.focus(), 250);
     }
   }, [open]);
@@ -58,6 +102,68 @@ export function ChatWidget() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
+
+  /**
+   * Handoff: build a summary from the conversation, save the transcript to
+   * the DB, stash the summary in sessionStorage for the contact form to read,
+   * then navigate to /contact.
+   */
+  const handoff = useCallback(async () => {
+    if (handoffBusy) return;
+    setHandoffBusy(true);
+    track("chat_handoff");
+    // Build a lightweight summary from the user/assistant messages
+    const userMsgs = messages
+      .filter((m) => m.role === "user")
+      .map((m) => m.content);
+    const assistantMsgs = messages
+      .filter((m) => m.role === "assistant")
+      .map((m) => m.content);
+    const summary = {
+      business: "",
+      problem: userMsgs[0] ?? "",
+      currentProcess: userMsgs.slice(1).join(" / ") ?? "",
+      currentTech: "",
+      desiredOutcome: "",
+      potentialDirection: assistantMsgs.slice(-1)[0] ?? "",
+      urgency: "",
+      contact: "",
+    };
+    // Stash for the contact form
+    const handoffPayload = {
+      summary,
+      improving: userMsgs[0] ?? "",
+      // attach the full conversation text for the team's reference
+      conversationText: messages
+        .map((m) => `${m.role === "user" ? "Visitor" : "ROHI"}: ${m.content}`)
+        .join("\n\n"),
+    };
+    try {
+      sessionStorage.setItem(HANDOFF_KEY, JSON.stringify(handoffPayload));
+    } catch {
+      /* ignore */
+    }
+    // Save transcript to DB (fire and forget — don't block navigation)
+    try {
+      void fetch("/api/chat/handoff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: sessionIdRef.current,
+          summary,
+          messages: messages
+            .filter((m) => !(m.streaming && m.content === ""))
+            .map((m) => ({ role: m.role, content: m.content })),
+        }),
+        keepalive: true,
+      });
+    } catch {
+      /* ignore — non-blocking */
+    }
+    setHandoffBusy(false);
+    setOpen(false);
+    router.push("/contact");
+  }, [handoffBusy, messages, router]);
 
   const send = useCallback(
     async (text: string) => {
@@ -279,17 +385,28 @@ export function ChatWidget() {
               )}
             </div>
 
-            {/* Handoff link */}
+            {/* Handoff — passes conversation context to the contact form */}
             <div className="flex items-center justify-between gap-2 border-t border-navy/5 bg-background px-3.5 py-1.5">
-              <a
-                href="/contact"
-                className="inline-flex items-center gap-1 font-mono-tech text-[10px] uppercase tracking-widest text-teal transition-colors hover:text-navy"
+              <button
+                type="button"
+                onClick={handoff}
+                disabled={handoffBusy || messages.length <= 1}
+                className="inline-flex items-center gap-1 font-mono-tech text-[10px] uppercase tracking-widest text-teal transition-colors hover:text-navy disabled:opacity-40"
               >
-                Start a Conversation
-                <ArrowUpRight className="size-3" />
-              </a>
+                {handoffBusy ? (
+                  <>
+                    <Loader2 className="size-3 animate-spin" />
+                    Saving context…
+                  </>
+                ) : (
+                  <>
+                    Start a Conversation
+                    <ArrowUpRight className="size-3" />
+                  </>
+                )}
+              </button>
               <span className="font-mono-tech text-[9px] uppercase tracking-widest text-ink-soft/50">
-                Powered by ROHI
+                Context shared with team
               </span>
             </div>
 

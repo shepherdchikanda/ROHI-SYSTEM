@@ -41,3 +41,29 @@ model Enquiry {
   successLooksLike String?
   createdAt       DateTime @default(now())
 }
+
+// Newsletter subscribers (Insights page).
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now())
+}
+
+// Chatbot conversation transcripts saved on handoff to /contact.
+model ChatTranscript {
+  id          String   @id @default(cuid())
+  sessionId   String?
+  summary     String?
+  transcript  String   // full JSON of messages
+  createdAt   DateTime @default(now())
+}
+
+// Lightweight, privacy-friendly analytics events (no PII, no cookies).
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  name      String
+  page      String?
+  payload   String?
+  createdAt DateTime @default(now())
+}

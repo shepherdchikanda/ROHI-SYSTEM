@@ -100,24 +100,35 @@
 }
 
 .dark {
-  --background: #0B1220;
+  /* Brand-aware dark mode: deep slate background (slightly darker than navy
+     so the navy "moment" sections still read as a distinct surface). */
+  --background: #070b14;
   --foreground: #FFFFFF;
-  --card: #111a2e;
+  --card: #101828;
   --card-foreground: #FFFFFF;
-  --popover: #111a2e;
+  --popover: #101828;
   --popover-foreground: #FFFFFF;
   --primary: #20C7C9;
   --primary-foreground: #0B1220;
-  --secondary: #1a2336;
+  --secondary: #131c2e;
   --secondary-foreground: #FFFFFF;
-  --muted: #1a2336;
+  --muted: #131c2e;
   --muted-foreground: #9aa6b8;
   --accent: #20C7C9;
   --accent-foreground: #0B1220;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: #1f2a3f;
-  --input: #1f2a3f;
+  --border: rgba(255, 255, 255, 0.10);
+  --input: rgba(255, 255, 255, 0.12);
   --ring: #20C7C9;
+  /* Brand tokens — navy stays (the accent surface), teal stays.
+     cloud & ink flip so light-themed sections become dark. */
+  --navy: #0B1220;          /* unchanged — navy sections stay navy */
+  --navy-soft: #131c2e;
+  --teal: #20C7C9;
+  --teal-soft: #2dd9db;
+  --ink: #FFFFFF;           /* primary text flips to white */
+  --ink-soft: #9aa6b8;      /* secondary text flips to slate */
+  --cloud: #101828;         /* light surface flips to lifted dark panel */
 }
 
 @layer base {
@@ -161,10 +172,10 @@
     background-size: 48px 48px;
   }
   .bg-cloud-grid {
-    background-color: #F5F7FA;
+    background-color: var(--cloud);
     background-image:
-      linear-gradient(to right, rgba(11,18,32,0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(11,18,32,0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgba(127,127,127,0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(127,127,127,0.08) 1px, transparent 1px);
     background-size: 48px 48px;
   }
   .teal-underline {
@@ -174,6 +185,38 @@
     background-position: 0 100%;
   }
 }
+
+/* ---- Dark-mode overrides for hardcoded brand utilities ----
+   The brand uses bg-navy/X, border-navy/X, text-navy directly (not semantic
+   tokens). In dark mode these would be invisible on dark surfaces, so we
+   remap them to light equivalents. Teal buttons keep navy text for contrast. */
+.dark .text-navy { color: #FFFFFF; }
+/* Keep navy text on teal surfaces (the signature CTA look) */
+.dark .bg-teal.text-navy,
+.dark .hover\:bg-teal.text-navy,
+.dark .bg-teal .text-navy { color: #0B1220; }
+.dark .hover\:text-navy:hover { color: #FFFFFF; }
+
+/* Borders: navy-tinted → light-tinted */
+.dark .border-navy\/5 { border-color: rgba(255,255,255,0.06); }
+.dark .border-navy\/10 { border-color: rgba(255,255,255,0.10); }
+.dark .border-navy\/15 { border-color: rgba(255,255,255,0.12); }
+.dark .border-navy\/20 { border-color: rgba(255,255,255,0.16); }
+.dark .border-navy\/40 { border-color: rgba(255,255,255,0.30); }
+
+/* Backgrounds: navy-tinted subtle panels → light-tinted subtle panels */
+.dark .bg-navy\/5 { background-color: rgba(255,255,255,0.04); }
+.dark .bg-navy\/10 { background-color: rgba(255,255,255,0.06); }
+.dark .bg-navy\/20 { background-color: rgba(255,255,255,0.10); }
+.dark .bg-navy\/\[0\.03\] { background-color: rgba(255,255,255,0.03); }
+.dark .bg-navy\/\[0\.04\] { background-color: rgba(255,255,255,0.04); }
+.dark .hover\:bg-navy\/5:hover { background-color: rgba(255,255,255,0.05); }
+.dark .hover\:bg-navy\/\[0\.03\]:hover { background-color: rgba(255,255,255,0.04); }
+.dark .hover\:bg-navy\/30:hover { background-color: rgba(0,0,0,0.30); }
+
+/* The "navy moment" sections (bg-navy) stay navy — but in dark mode the page
+   bg is darker, so add a subtle top border so the section edge is visible. */
+.dark .bg-navy { background-color: #0B1220; }
 
 /* Custom scrollbar for long lists */
 .scroll-thin::-webkit-scrollbar {

@@ -98,3 +98,78 @@ Stage Summary:
 - Multi-page nav verified: desktop + mobile menu, active states, URL updates
 - Chatbot verified: streams responses, switches to Portuguese automatically, asks qualifying discovery questions (not over-promising), offers /contact handoff, works on inner pages
 - Agent Browser + VLM confirm visual quality maintained
+
+---
+Task ID: 14
+Agent: full-stack-developer (Engagement page)
+Task: Build /engagement page — commercial model + engagement lifecycle
+
+Work Log:
+- Read worklog + section-primitives, cta-band, rohi-button, about-section, approach-section, custom-systems-section, products-section, globals.css to internalize the design language (navy/cloud/light tones, eyebrow + section number + heading + lede pattern, gap-px grid with bg-navy/5 dividers, mono-tech labels in teal, scroll-driven vertical timeline pattern)
+- Created src/components/rohi/sections/engagement-section.tsx (client) with 3 exported components:
+  * EngagementIntroSection — Block 1, tone=navy, padded top to clear fixed header (pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-32), .bg-navy-grid opacity-50 overlay + teal glow blob (top-right), SectionHeader (number=01, eyebrow=Engagement, tone=light), 3-card "what this page covers" summary (Commercial model / Engagement lifecycle / How we approach scope), Fig. 11 caption
+  * EngagementModelSection — Block 2, tone=cloud with .bg-cloud-grid opacity-60 overlay, SectionHeader (number=02, eyebrow=Commercial model), 4 stage cards in gap-px grid (bg-background on bg-navy/5, border-navy/10) — Standardized Solutions / Intelligent Systems / Recurring Services / Products — each with mono 01–04 + Manrope title + description; ChevronRight connector pills between cards on lg; trajectory line below mirroring About page pattern (Standardized → Intelligent → Recurring → Products); scoping note panel restating confidentiality stance ("Internal pricing, complexity scoring and margins are not public")
+  * EngagementLifecycleSection — Block 3, tone=light, SectionHeader (number=03, eyebrow=Engagement lifecycle), 6-phase vertical timeline (01–06: First conversation / Discovery / Solution design / Proposal / Build / Launch & improve) — reuses Approach section's scroll-driven pattern adapted for light bg: track bg-navy/10, teal progress fill via useScroll/useTransform, teal-bordered node markers on bg-background, mono step numbers in teal, Manrope headings, connecting vertical line on left; "Honest scope" dashed-border note: "ROHI does not promise delivery dates, exact costs or guaranteed ROI before understanding the work"
+- Created src/app/engagement/page.tsx (server component) — exports metadata (title "Engagement — How we work with clients", description, canonical /engagement), renders the three section components + CtaBand (eyebrow=Engagement, heading="Have a problem worth solving?", lede, ctaLabel="Start a Conversation", href=/contact)
+- Did NOT add engagement to the main nav (per instructions — another agent handles nav links)
+- Did NOT invent clients, metrics, testimonials, or delivery guarantees; did NOT reveal internal pricing/margins/complexity scores — explicitly stated these are not public
+- Verified: bun run lint passes (exit 0); curl /engagement returns HTTP 200; rendered HTML contains all expected content markers; <title> = "Engagement — How we work with clients · ROHI SYSTEMS"; canonical = https://rohi.systems/engagement; dev.log shows GET /engagement 200 (compile 575ms, render 111ms) with no runtime errors
+
+Stage Summary:
+- Artifacts produced:
+  * src/components/rohi/sections/engagement-section.tsx (client, 3 exported sections)
+  * src/app/engagement/page.tsx (server, metadata + composition)
+- Key decisions:
+  * Server page + client section file (mirrors about/approach page pattern) — page stays a server component for metadata + composition, sections stay client for framer-motion whileInView reveals + scroll-driven timeline
+  * Reused all existing primitives (Section, Container, SectionHeader, Eyebrow, RohiButton via CtaBand, motion); no new design tokens or utility classes introduced
+  * Block 2 progression uses ChevronRight connector pills + trajectory line for visual reinforcement of "scales with the problem" without inventing metrics
+  * Block 3 timeline reuses Approach section's scroll-driven progress fill (teal on light) so the two methodology/lifecycle pages feel like a family — but content is distinct (commercial lifecycle vs. methodology)
+  * Confidentiality stance surfaced three times (intro summary card, scoping note panel, honest-scope dashed panel) — explicit, repeated, brand-consistent
+
+---
+Task ID: 13
+Agent: full-stack-developer (FAQ page)
+Task: Build /faq page with accordion Q&A based on ROHI documented stance
+
+Work Log:
+- Read worklog.md and existing design-system primitives (section-primitives.tsx, cta-band.tsx, ui/accordion.tsx, rohi-button.tsx) — confirmed exact API: Section(tone="light"|"cloud"|"navy", className), SectionHeader(number/eyebrow/heading/lede/tone), Eyebrow(tone), CtaBand(eyebrow/heading/lede/ctaLabel/href), shadcn Accordion (client, Radix-based)
+- Confirmed cn() uses tailwind-merge so accordion item border overrides compose safely
+- Created client wrapper src/components/rohi/sections/faq-accordion.tsx ("use client") exposing FaqAccordion({groups}) + FaqGroup/FaqItem types; renders grouped accordion using shadcn Accordion with monospace category labels (numeral + divider + label + question count), bordered cards (border-navy/10 rounded-xl with divide-y), text-ink trigger with hover:no-underline, text-ink-soft content
+- Created src/app/faq/page.tsx (server component, no "use client") exporting metadata {title: "FAQ — Questions, answered", description, alternates.canonical: "/faq"}; structure: Section(tone="cloud", padding pt-28 pb-12 sm:pt-36 sm:pb-16 lg:pt-40 lg:pb-20) → SectionHeader(number="01", eyebrow="FAQ", heading="Questions, answered honestly.", lede on documented positioning / no over-promising); Section(tone="light") with "02 / Answers" sub-header + FaqAccordion; CtaBand(eyebrow="Still have questions?", heading="The ROHI team can answer the rest.", ctaLabel="Start a Conversation", href="/contact")
+- Authored 12 honest Q&A across 3 categories (Working with ROHI: 5; How projects work: 4; Products & approach: 3) using ONLY ROHI's documented brand stance — no invented prices, clients, delivery dates, ROI guarantees; FIMS described as controlled product, AI as capability-not-requirement, pricing/integration/timeline framed as "understand first then scope"
+- Verified: bun run lint exit 0; curl GET /faq → HTTP 200 (compile 560ms, render 88ms); HTML contains all categories, all key questions, hero heading, CTA copy, 42× font-mono-tech utility usages — visual language matches other ROHI pages
+- Did NOT modify SiteHeader nav (task scoped to page deliverables only); FAQ reachable via direct URL and via chatbot /contact handoff
+
+Stage Summary:
+- Artifacts: src/components/rohi/sections/faq-accordion.tsx (client accordion wrapper), src/app/faq/page.tsx (server page + metadata)
+- Key decisions: kept server-component page (per spec) by extracting accordion into small client wrapper; reused SectionHeader/Container/Section/Eyebrow/CtaBand primitives exactly as documented; accordion items rendered as grouped bordered cards with monospace category numerals to match section-number rhythm; answer copy extended ROHI's documented stance (no over-promising) without inventing facts/figures/quotes
+- Page compiles cleanly, lints cleanly, renders fully, sticky footer + shared header intact via root layout
+
+---
+Task ID: 25
+Agent: Main orchestrator + 2 subagents (FAQ, Engagement)
+Task: Implement 12 enhancement features (points 1,2,5,6,7,8,9,10,12,13,14,15)
+
+Work Log:
+- Site config (src/lib/site-config.ts): WhatsApp number, email, address as PLACEHOLDERS + whatsappLink() helper
+- Prisma schema: added Subscriber, ChatTranscript, AnalyticsEvent models + db:push
+- API routes: /api/subscribe (newsletter, upsert), /api/chat/handoff (save transcript + summary), /api/track (privacy-friendly analytics, sendBeacon)
+- Sitemap (src/app/sitemap.ts): all 10 static routes
+- WhatsApp button (src/components/rohi/whatsapp-button.tsx): floating green button, stacks above chat widget, hides when chat panel open, hover hint, opens wa.me
+- Chatbot handoff (points 2+15): sessionId (sessionStorage), conversation persistence (localStorage), handoff builds summary + POSTs transcript + stashes context in sessionStorage + navigates to /contact; contact form reads it, prefills "improving" field, shows "Context from your chat" banner
+- Newsletter form (src/components/rohi/sections/newsletter-form.tsx): email capture on Insights page, posts to /api/subscribe, success state, added to /insights
+- Analytics (src/lib/analytics.ts + analytics-listener.tsx): delegation-based click tracking on [data-slot="rohi-button"], page_view on route change; contact_submit/success, chat_open, chat_handoff, whatsapp_click, newsletter_submit tracked
+- Page transitions (src/app/template.tsx): Framer Motion keyed by pathname, subtle 0.25s fade+rise
+- Scroll utilities (src/components/rohi/scroll-utilities.tsx): teal progress bar under header (useScroll spring) + back-to-top button (appears after 600px scroll)
+- Dark mode (point 12): next-themes ThemeProvider, ThemeToggle button in header, dark tokens in globals.css (bg #070b14, cloud #101828, ink→white, ink-soft→slate) + targeted overrides for hardcoded border-navy/X, bg-navy/X, text-navy utilities (teal buttons keep navy text); bg-cloud-grid now uses --cloud var. VLM verified: "fully realized, high-quality dark mode"
+- Insight articles (point 5): src/lib/insights.ts with 3 substantive articles (When standard software stops fitting / Where AI actually improves the work / The cost of fragmented information) based on documented ROHI philosophy; /insights/[slug] dynamic route with generateStaticParams + generateMetadata; article page with header, body blocks (h2/p/ul/quote), prev/next, inline handoff; updated InsightsSection to show published articles as links + remaining 3 as "Planned"
+- FAQ page (subagent): /faq with shadcn accordion, 12 Q&A in 3 categories, all from documented brand stance (no invented facts)
+- Engagement page (subagent): /engagement with commercial model (4 stages) + 6-phase engagement lifecycle timeline, "honest scope" notes
+- Nav updated: added Engagement + FAQ (10 items); footer nav updated too
+- Fixed: duplicate React key in footer (key={item.label}), import path bug in insights pages
+
+Stage Summary:
+- All 15 routes return 200, lint passes (exit 0), zero runtime errors
+- 12 features implemented & verified: WhatsApp button, chat→contact handoff (transcript saved to DB, form prefilled), insight article pages, FAQ accordion, engagement page, newsletter form (subscriber saved), page transitions, scroll progress + back-to-top, dark mode toggle (VLM-verified), sitemap, analytics events (7+ logged), chatbot conversation persistence (localStorage)
+- Verified via Agent Browser: dark mode toggle works (.dark class), chat handoff prefills form + shows banner + saves transcript, newsletter subscribes (DB record), FAQ accordion, scroll progress bar, back-to-top, page navigation, WhatsApp button present
+- REMINDERS for user: WhatsApp number is placeholder (+258 84 000 0000), email is placeholder (hello@rohi.systems), address is placeholder — all in src/lib/site-config.ts (one-file update)
