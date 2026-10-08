@@ -20,6 +20,17 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   const isDark = theme === "dark";
 
+  // Gate ALL theme-dependent output behind `mounted` so the server render
+  // and the first client render produce identical markup. Without this,
+  // next-themes resolves `theme` from localStorage before hydration, making
+  // aria-label/title differ between server and client → hydration mismatch.
+  const ariaLabel = mounted
+    ? isDark
+      ? "Switch to light mode"
+      : "Switch to dark mode"
+    : "Toggle theme";
+  const title = mounted ? (isDark ? "Light mode" : "Dark mode") : "Theme";
+
   return (
     <button
       type="button"
@@ -28,8 +39,9 @@ export function ThemeToggle({ className }: { className?: string }) {
         "inline-flex size-9 items-center justify-center rounded-md text-ink-soft transition-colors hover:text-navy hover:bg-navy/5 outline-none focus-visible:ring-[3px] focus-visible:ring-teal/40",
         className,
       )}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      title={isDark ? "Light mode" : "Dark mode"}
+      aria-label={ariaLabel}
+      title={title}
+      suppressHydrationWarning
     >
       {mounted ? (
         <AnimatePresence mode="wait" initial={false}>

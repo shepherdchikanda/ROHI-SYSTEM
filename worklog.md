@@ -193,3 +193,15 @@ Stage Summary:
   * Portuguese question → responded naturally in PT ✓
   * Methodology question via chat widget → accurate 6-step list from KB ✓
 - The "connected knowledge base" referenced in the prompt is now REAL (not aspirational) — the assistant grounds in confirmed ROHI facts and falls back honestly for anything outside the KB
+
+---
+Task ID: 32
+Agent: Main orchestrator
+Task: Fix ThemeToggle hydration mismatch (aria-label/title differed between server and client in dark mode)
+
+Work Log:
+- Root cause: ThemeToggle used `mounted` to gate the inner icon content, but the `aria-label` and `title` attributes read `isDark` directly. On the server, `theme` is undefined → "Switch to dark mode". On the client, next-themes resolves `theme="dark"` from localStorage BEFORE React hydrates → "Switch to light mode". Mismatch → hydration error (specifically visible when the user had previously selected dark mode and reloaded).
+- Fix: gated ALL theme-dependent output (aria-label + title) behind `mounted`, using neutral labels ("Toggle theme" / "Theme") before mount so server + first client render are identical. Added `suppressHydrationWarning` on the button as a belt-and-braces. The icon content was already gated.
+
+Stage Summary:
+- Verified via Agent Browser: fresh load (light) → no hydration errors, label "Switch to dark mode" ✓; set dark mode + reload → no hydration errors, label "Switch to light mode" ✓. The previously-failing dark-mode-reload case is now clean.
