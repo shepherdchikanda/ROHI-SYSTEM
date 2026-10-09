@@ -10,14 +10,21 @@ import { RohiLogo } from "./rohi-logo";
 import { RohiButton } from "./rohi-button";
 import { ThemeToggle } from "./theme-toggle";
 
-// Header nav — streamlined to the essentials only.
+// Full header navigation — all pages reachable from the top bar.
 const NAV = [
+  { label: "Home", href: "/" },
   { label: "Solutions", href: "/solutions" },
   { label: "Products", href: "/products" },
+  { label: "Approach", href: "/approach" },
+  { label: "Engagement", href: "/engagement" },
   { label: "Case Studies", href: "/case-studies" },
+  { label: "Insights", href: "/insights" },
+  { label: "About", href: "/about" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contact", href: "/contact" },
 ];
 
-// Full nav — used in the mobile menu.
+// Mobile menu includes the Assessment link (desktop has the CTA + footer for it).
 const MOBILE_NAV = [
   { label: "Home", href: "/" },
   { label: "Solutions", href: "/solutions" },
@@ -89,20 +96,22 @@ export function SiteHeader() {
           <RohiLogo tone="dark" height={46} priority />
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-0.5 lg:flex">
           {NAV.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-teal/40",
+                  "rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-teal/40",
                   isActive ? "text-navy" : "text-ink-soft hover:text-navy",
                 )}
               >
                 {item.label}
-                {isActive && <span className="mt-0.5 block h-px w-full bg-teal" aria-hidden />}
               </Link>
             );
           })}
