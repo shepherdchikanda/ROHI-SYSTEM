@@ -270,3 +270,19 @@ Stage Summary:
 - All 17 routes return 200, lint passes (exit 0, 1 harmless font warning), zero runtime errors
 - Verified via Agent Browser: header (3 links only), cookie banner (shows + accept works), footer contact block (email hello@rohi.systems + WhatsApp +258 84 000 0000 + Maputo) + all 5 legal links (Privacy/Terms/Cookies/AI Notice/Security) + Cookie preferences button, assessment page (intro + Start button), is-this-you section on home, privacy AI section, security compliance approach (INTIC present)
 - All honesty guardrails intact (no fake compliance claims, safe language, INTIC classification "being determined")
+
+---
+Task ID: 34
+Agent: Main orchestrator
+Task: Restore full 10-link navigation to desktop header + clarify git situation + create labeled commit
+
+Work Log:
+- Restored the full desktop header nav (10 links: Home, Solutions, Products, Approach, Engagement, Case Studies, Insights, About, FAQ, Contact) — was streamlined to 3 links per user's earlier blueprint, user requested full nav back
+- Fixed active-state logic for Home link (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)) so Home doesn't match every path
+- Tightened nav spacing (gap-0.5, px-2.5, text-[13px]) so 10 links + logo + toggle + CTA fit cleanly at lg breakpoint
+- Mobile menu already had full nav + Assessment
+- Created labeled git commit "ROHI SYSTEMS website — full build with all features" as a restore point
+
+Stage Summary:
+- Lint passes (exit 0), home 200, header renders all 10 links + logo + toggle + CTA cleanly (VLM: "no visible overlap or cramping")
+- Git: local repo only, no remote configured. Labeled commit created for restore point
