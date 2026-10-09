@@ -205,3 +205,68 @@ Work Log:
 
 Stage Summary:
 - Verified via Agent Browser: fresh load (light) → no hydration errors, label "Switch to dark mode" ✓; set dark mode + reload → no hydration errors, label "Switch to light mode" ✓. The previously-failing dark-mode-reload case is now clean.
+
+---
+Task ID: REBUILD-LEGAL
+Agent: full-stack-developer (rebuild 3 legal pages)
+Task: Rebuild /privacy, /terms, /security after regression
+
+Work Log:
+- Read worklog.md (Tasks 1-25, 32) + section-primitives.tsx + cta-band.tsx + site-config.ts + faq/page.tsx + engagement/page.tsx + sitemap.ts + site-footer.tsx + cookie-consent.tsx + globals.css to internalize the exact visual language (Section tone="light"|"cloud"|"navy"; SectionHeader number/eyebrow/heading/lede/tone; mono-tech section numbers in teal #20C7C9; Manrope bold tracking-[-0.02em] headings; ink-soft #667085 prose; padded intro className pt-28 pb-12 sm:pt-36 sm:pb-16 lg:pt-40 lg:pb-20)
+- Confirmed sitemap.ts already lists /privacy, /terms, /security, /cookies, /ai-notice as routes; site-footer Legal column already links to all 5; cookie-consent.tsx already links to /cookies — so internal Link to /cookies and /ai-notice is safe (these pages are referenced elsewhere in the codebase already)
+- Created src/app/privacy/page.tsx (server component, metadata title "Privacy Policy" + description + canonical "/privacy"):
+  * Inline SubSection component (number + eyebrow + SectionHeading text-xl + prose max-w-3xl) — border-t border-navy/10 between sub-sections for rhythm; prose styled inline with [&_a]:text-teal [&_a:hover]:underline, [&_ul]:list-disc, [&_li]:marker:text-navy/40 so plain <Link>/<a> get ROHI styling without a prose plugin
+  * Intro Section tone="cloud" with padded top + SectionHeader (number=01, eyebrow=Privacy, heading="Privacy Policy.") + "Last revised: October 2026" (mono-tech, ink-soft/70)
+  * Body Section tone="light" with "02 / The detail" sub-header + 10 numbered SubSections (03 What we collect / 04 How we store it / 05 How we use it / 06 Third-party services / 07 AI assistant / 08 Cookies / 09 Your rights / 10 Children / 11 Changes / 12 Contact)
+  * Section 03 lists all 11 contact-form fields verbatim from spec (Name, Company, Email, Phone/WhatsApp, What do you need?, Tell us about the business problem, Current process, Current technology, What would success look like?, Budget range, Preferred contact method) + 4 other categories
+  * Section 07 (AI assistant) summarizes the 7 spec points (collected, why, processed by, stored, human review, data leaving Mozambique, model training) with Link to /ai-notice; warns against sharing passwords/credentials
+  * All internal links via next/link Link to /contact, /cookies, /ai-notice; email via mailto:SITE_CONFIG.email
+  * Closing CtaBand(eyebrow=Privacy, heading="Have a question about how we handle data?", ctaLabel="Start a Conversation", href=/contact)
+- Created src/app/terms/page.tsx (server component, metadata title "Terms of Service" + canonical "/terms"):
+  * Same SubSection pattern + intro + body
+  * 13 clauses (03 Acceptance / 04 Website usage / 05 Services / 06 Payments / 07 Subscriptions & recurring / 08 IP / 09 Client responsibilities / 10 Third-party & AI / 11 AI limitations & disclosure / 12 Liability / 13 Termination / 14 Governing law / 15 Changes)
+  * Clause 05 lists all 6 capability areas (Business Systems, AI & Intelligence, Automation, Data & Analytics, Digital Foundations, Custom Solutions) + Support & Maintenance, with engagement agreement prevails
+  * Clause 11 AI limitations references /ai-notice Link; clause 15 Changes references /contact + mailto
+  * "Last revised: October 2026"
+  * Closing CtaBand(eyebrow=Terms, heading="Have a question about working with ROHI?", ctaLabel="Start a Conversation", href=/contact)
+- Created src/app/security/page.tsx (server component, metadata title "Security & Data Protection" + canonical "/security"):
+  * Inline BodySection component (identical visual pattern to SubSection, named BodySection per spec)
+  * Intro Section tone="cloud" (padded) + SectionHeader (number=01, eyebrow=Security, heading="Security & data protection.", lede scoping to actually-implemented controls + per-engagement client work)
+  * Body Section tone="light" with "02 / The controls" sub-header + BodySections 03 Transport / 04 Data storage / 05 Authentication & access / 06 Data isolation / 07 Cookies & analytics / 08 Backups / 09 Monitoring / 10 Security practices
+  * Distinct "What we don't claim" panel between sections 10 and 11: rounded-xl border border-navy/15 bg-cloud p-6/8, ShieldCheck icon in navy box with teal icon, mono-tech label, h3 "Honest boundaries." + 4 explicit non-claims (no SOC 2/ISO 27001, no multi-tenant SaaS, no AI accuracy guarantee with Link to /ai-notice, no encryption-at-rest beyond SQLite + host FS) — visually isolated so a visitor scanning cannot miss it
+  * BodySection 11 Compliance approach: "Our approach to Mozambique's digital framework." — safe language verbatim from spec ("committed to responsible, secure and transparent technology practices; designs systems with applicable Mozambican requirements and recognized security principles in mind"); lists 5 framework items tracked (Electronic Transactions Law 3/2017, INTIC [classification being determined; won't claim registration not held], Cybersecurity Law + Cybercrime Law 2026, pending Data Protection Law [designing around its principles now], Cloud Computing + Data Centre regulations [reassess per engagement]); notes ROHI works with Mozambican legal counsel for specific validation; explicitly states "this page is an honest statement of approach, not a compliance certification"
+  * BodySection 12 Reporting a vulnerability: responsible disclosure with Link to /contact + mailto:SITE_CONFIG.email
+  * Closing CtaBand(eyebrow=Security, heading="Have a security question for your project?", lede verbatim from spec, ctaLabel="Start a Conversation", href=/contact)
+
+Stage Summary:
+- Artifacts:
+  * src/app/privacy/page.tsx (server component, 10 SubSections)
+  * src/app/terms/page.tsx (server component, 13 clauses)
+  * src/app/security/page.tsx (server component, 11 BodySections + explicit "what we don't claim" panel)
+  * src/agent-ctx/REBUILD-LEGAL-full-stack-developer.md (work record)
+- Honest-content discipline enforced throughout: no fake certifications (no SOC 2/ISO 27001 claims), no INTIC registration claimed (classification being determined), no AI accuracy/feasibility/outcome guarantees, no RTO/RPO for the website, no encryption-at-rest beyond SQLite + host FS, AI accuracy disclaimer in both /terms clause 11 and /security panel + Link to /ai-notice, data leaving Mozambique disclosed in /privacy section 07
+- Visual language match verified: monospace section numbers in teal (#20C7C9), navy eyebrow with divider dot, Manrope bold tracking-[-0.02em] headings at text-xl sm:text-2xl, prose text-ink-soft leading-relaxed max-w-3xl, padded intro pattern, navy CtaBand closing
+- Verified: bun run lint exit 0 (only 1 pre-existing warning in layout.tsx unrelated to these pages); curl /privacy /terms /security all return HTTP 200; titles correct (e.g. "Privacy Policy · ROHI SYSTEMS"); canonicals correct (https://rohi.systems/privacy, /terms, /security); "Last revised: October 2026" present on all 3; dev.log shows clean compiles (641ms / 861ms / 579ms) + renders (215ms / 123ms / 136ms) with no runtime errors
+
+---
+Task ID: 33
+Agent: Main orchestrator + 1 subagent (3 legal pages)
+Task: REBUILD after major regression — ~13 files were missing/reverted (cookie banner, consent, cookie button, 5 legal pages, assessment lib/quiz/page/API, is-this-you section, header, footer, layout, sitemap, prisma schema, analytics)
+
+Work Log:
+- Diagnosed: footer reverted to old flat version (lost contact block + grouped columns + proper legal links), header reverted to 10-link nav (lost streamlined 3-link + ThemeToggle), layout reverted to next/font/google (lost <link> + CookieConsent), 13 files entirely missing (never committed to git — couldn't restore via git)
+- Rebuilt infrastructure: consent.ts, cookie-consent.tsx, cookie-preferences-button.tsx, analytics.ts (re-added consent-gating)
+- Rebuilt header: streamlined 3-link desktop nav (Solutions/Products/Case Studies) + ThemeToggle + mobile menu with full nav + Assessment link
+- Rebuilt layout: <link> font approach (not next/font/google — avoids the ChunkLoadError/font-resolution failure) + CookieConsent + all providers
+- Fixed globals.css: re-added --font-manrope/--font-jetbrains-mono variable definitions to :root
+- Rebuilt assessment: assessment.ts (lib) + assessment-quiz.tsx (one-question-at-a-time client component) + /assessment page + /api/assessment route
+- Rebuilt is-this-you-section.tsx + restored home page (page.tsx) with IsThisYouSection between Problem and Capabilities
+- Rebuilt sitemap: all 16 routes
+- Added Assessment model to Prisma schema + db:push
+- Rebuilt /cookies (Cookie Policy, 7 sections) + /ai-notice (AI Assistant Notice, 12 sections) myself
+- Delegated /privacy, /terms, /security to subagent (rebuilt with the strengthened content: privacy has the AI assistant section + AI-notice link; security has the compliance approach section with INTIC/Electronic Transactions Law/2026 laws; terms has the AI disclosure clause)
+
+Stage Summary:
+- All 17 routes return 200, lint passes (exit 0, 1 harmless font warning), zero runtime errors
+- Verified via Agent Browser: header (3 links only), cookie banner (shows + accept works), footer contact block (email hello@rohi.systems + WhatsApp +258 84 000 0000 + Maputo) + all 5 legal links (Privacy/Terms/Cookies/AI Notice/Security) + Cookie preferences button, assessment page (intro + Start button), is-this-you section on home, privacy AI section, security compliance approach (INTIC present)
+- All honesty guardrails intact (no fake compliance claims, safe language, INTIC classification "being determined")

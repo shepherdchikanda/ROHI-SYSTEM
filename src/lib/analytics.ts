@@ -1,15 +1,15 @@
 /**
  * Privacy-friendly analytics helper.
  * Fires events to /api/track — no cookies, no PII.
- * Usage: `import { track } from "@/lib/analytics"; track("cta_click", { label: "hero" });`
+ * Respects cookie consent: events are only recorded when the visitor
+ * has explicitly accepted analytics.
  */
-export function track(
-  name: string,
-  payload?: Record<string, unknown>,
-): void {
+import { analyticsAllowed } from "@/lib/consent";
+
+export function track(name: string, payload?: Record<string, unknown>): void {
   if (typeof window === "undefined") return;
+  if (!analyticsAllowed()) return;
   const page = window.location.pathname;
-  // Use sendBeacon when available so it survives page unload/navigation
   try {
     const body = JSON.stringify({ name, page, payload });
     if (navigator.sendBeacon) {
@@ -17,7 +17,6 @@ export function track(
       const ok = navigator.sendBeacon("/api/track", blob);
       if (ok) return;
     }
-    // Fallback to fetch (no await — fire-and-forget)
     void fetch("/api/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -25,11 +24,10 @@ export function track(
       keepalive: true,
     }).catch(() => {});
   } catch {
-    /* ignore — analytics must never break UX */
+    /* ignore */
   }
 }
 
-/** Convenience: track a CTA click with its label/destination. */
 export function trackCta(label: string, href?: string): void {
   track("cta_click", { label, href });
 }

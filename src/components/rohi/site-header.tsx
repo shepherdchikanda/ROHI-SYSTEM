@@ -10,7 +10,15 @@ import { RohiLogo } from "./rohi-logo";
 import { RohiButton } from "./rohi-button";
 import { ThemeToggle } from "./theme-toggle";
 
+// Header nav — streamlined to the essentials only.
 const NAV = [
+  { label: "Solutions", href: "/solutions" },
+  { label: "Products", href: "/products" },
+  { label: "Case Studies", href: "/case-studies" },
+];
+
+// Full nav — used in the mobile menu.
+const MOBILE_NAV = [
   { label: "Home", href: "/" },
   { label: "Solutions", href: "/solutions" },
   { label: "Products", href: "/products" },
@@ -20,6 +28,7 @@ const NAV = [
   { label: "Insights", href: "/insights" },
   { label: "About", href: "/about" },
   { label: "FAQ", href: "/faq" },
+  { label: "Assessment", href: "/assessment" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -35,9 +44,6 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close mobile menu on route change — handled in link onClick instead of effect
-
-  // Lock body scroll when mobile menu open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -49,7 +55,6 @@ export function SiteHeader() {
     };
   }, [open]);
 
-  // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -58,7 +63,6 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Scroll to top on home click when already home
   function handleHomeClick(e: React.MouseEvent) {
     if (pathname === "/") {
       e.preventDefault();
@@ -76,47 +80,34 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8 lg:h-20">
-        {/* Brand */}
         <Link
           href="/"
           onClick={handleHomeClick}
           className="flex items-center rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-teal/40"
           aria-label="ROHI SYSTEMS — home"
         >
-          <RohiLogo tone="dark" height={44} priority />
+          <RohiLogo tone="dark" height={46} priority />
         </Link>
 
-        {/* Desktop nav */}
-        <nav
-          aria-label="Primary"
-          className="hidden items-center gap-1 lg:flex"
-        >
+        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
           {NAV.map((item) => {
-            const isActive =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
+            const isActive = pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-teal/40",
-                  isActive
-                    ? "text-navy"
-                    : "text-ink-soft hover:text-navy",
+                  isActive ? "text-navy" : "text-ink-soft hover:text-navy",
                 )}
               >
                 {item.label}
-                {isActive && (
-                  <span className="mt-0.5 block h-px w-full bg-teal" aria-hidden />
-                )}
+                {isActive && <span className="mt-0.5 block h-px w-full bg-teal" aria-hidden />}
               </Link>
             );
           })}
         </nav>
 
-        {/* CTA + theme toggle (desktop) */}
         <div className="hidden items-center gap-1 lg:flex">
           <ThemeToggle />
           <RohiButton href="/contact" size="sm" withArrow={false}>
@@ -124,7 +115,6 @@ export function SiteHeader() {
           </RohiButton>
         </div>
 
-        {/* Mobile toggle */}
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
@@ -137,14 +127,7 @@ export function SiteHeader() {
         </button>
       </div>
 
-      {/* Mobile menu */}
-      <div
-        id="mobile-menu"
-        className={cn(
-          "lg:hidden",
-          open ? "pointer-events-auto" : "pointer-events-none",
-        )}
-      >
+      <div id="mobile-menu" className={cn("lg:hidden", open ? "pointer-events-auto" : "pointer-events-none")}>
         <div
           className={cn(
             "fixed inset-0 top-16 z-40 bg-navy/30 backdrop-blur-sm transition-opacity duration-300",
@@ -156,20 +139,12 @@ export function SiteHeader() {
         <div
           className={cn(
             "absolute inset-x-0 top-16 z-50 border-b border-navy/10 bg-background shadow-lg transition-all duration-300",
-            open
-              ? "translate-y-0 opacity-100"
-              : "-translate-y-2 opacity-0",
+            open ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0",
           )}
         >
-          <nav
-            aria-label="Mobile"
-            className="mx-auto flex max-w-7xl flex-col px-5 py-4 sm:px-6"
-          >
-            {NAV.map((item) => {
-              const isActive =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href);
+          <nav aria-label="Mobile" className="mx-auto flex max-w-7xl flex-col px-5 py-4 sm:px-6">
+            {MOBILE_NAV.map((item) => {
+              const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
@@ -177,9 +152,7 @@ export function SiteHeader() {
                   onClick={() => setOpen(false)}
                   className="flex items-center justify-between border-b border-navy/5 py-3 text-base font-medium transition-colors"
                 >
-                  <span className={isActive ? "text-teal" : "text-ink"}>
-                    {item.label}
-                  </span>
+                  <span className={isActive ? "text-teal" : "text-ink"}>{item.label}</span>
                   <span className="font-mono-tech text-[10px] uppercase tracking-widest text-ink-soft/50">
                     {item.href === "/" ? "home" : item.href.replace("/", "")}
                   </span>
@@ -187,11 +160,7 @@ export function SiteHeader() {
               );
             })}
             <div className="pt-4">
-              <RohiButton
-                href="/contact"
-                size="lg"
-                className="w-full"
-              >
+              <RohiButton href="/contact" size="lg" className="w-full">
                 Start a Conversation
               </RohiButton>
             </div>

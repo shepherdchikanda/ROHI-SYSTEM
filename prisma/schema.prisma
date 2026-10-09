@@ -67,3 +67,13 @@ model AnalyticsEvent {
   payload   String?
   createdAt DateTime @default(now())
 }
+
+// Self-assessment submissions (the "How ready is your organization?" quiz).
+model Assessment {
+  id        String   @id @default(cuid())
+  email     String?
+  answers   String   // JSON: array of {questionId, score, label}
+  score     Int
+  stage     String
+  createdAt DateTime @default(now())
+}

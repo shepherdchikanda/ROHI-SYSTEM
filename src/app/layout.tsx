@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { SiteHeader } from "@/components/rohi/site-header";
@@ -9,20 +8,7 @@ import { ThemeProvider } from "@/components/rohi/theme-provider";
 import { ScrollUtilities } from "@/components/rohi/scroll-utilities";
 import { WhatsAppButton } from "@/components/rohi/whatsapp-button";
 import { AnalyticsListener } from "@/components/rohi/analytics-listener";
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600"],
-});
+import { CookieConsent } from "@/components/rohi/cookie-consent";
 
 const siteUrl = "https://rohi.systems";
 
@@ -48,9 +34,7 @@ export const metadata: Metadata = {
   authors: [{ name: "ROHI SYSTEMS" }],
   creator: "ROHI SYSTEMS",
   publisher: "ROHI SYSTEMS",
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
   openGraph: {
     title: "ROHI SYSTEMS — Technology That Moves Business.",
     description:
@@ -83,19 +67,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${manrope.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground`}
-      >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="antialiased bg-background text-foreground">
         <ThemeProvider>
           <AnalyticsListener />
           <ScrollUtilities />
           <div className="flex min-h-screen flex-col">
-            {/* Skip link */}
             <a
               href="#main"
               className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-navy focus:px-4 focus:py-2 focus:text-sm focus:text-white"
@@ -111,6 +98,7 @@ export default function RootLayout({
           <Toaster />
           <WhatsAppButton />
           <ChatWidget />
+          <CookieConsent />
         </ThemeProvider>
       </body>
     </html>

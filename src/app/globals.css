@@ -53,6 +53,10 @@
 }
 
 :root {
+  /* Fonts — loaded via <link> in layout head (Google Fonts CDN) */
+  --font-manrope: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-jetbrains-mono: "JetBrains Mono", ui-monospace, monospace;
+
   /* Radius */
   --radius: 0.5rem;
 
