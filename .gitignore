@@ -52,3 +52,11 @@ prompt
 server.log
 # Skills directory
 /skills/
+# ROHI — secrets + local data (never push)
+.env
+.env.*
+db/*.db
+db/*.db-journal
+dev.log
+server.log
+agent-ctx/
