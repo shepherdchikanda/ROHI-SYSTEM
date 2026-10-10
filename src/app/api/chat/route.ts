@@ -57,7 +57,7 @@ export async function POST(req: Request) {
   let upstreamStream: ReadableStream<Uint8Array> | null = null;
   try {
     const result = await zai.chat.completions.create({
-      model: process.env.ZAI_MODEL || "glm-4-plus",
+      model: process.env.ZAI_MODEL || "glm-4.5-flash",
       messages,
       stream: true,
       thinking: { type: "disabled" },
