@@ -1,0 +1,830 @@
+     1→I researched this against current Mozambican sources, with the cutoff **7 October 2026**. There are several important updates compared with the material you pasted earlier.
+     2→
+     3→> **Important:** this is regulatory research, not a legal opinion. Before launch, I recommend having a Mozambican technology/commercial lawyer validate ROHI's exact classification and final legal documents.
+     4→
+     5→# ROHI SYSTEMS — Mozambique Digital Legal & Regulatory Research
+     6→
+     7→## 1. The most important finding: Mozambique's framework has changed
+     8→
+     9→The biggest change is that Mozambique now has a significantly more developed digital-regulation framework than it did even a year ago.
+    10→
+    11→As of today:
+    12→
+    13→* **Electronic Transactions Law No. 3/2017** remains foundational.
+    14→* **INTIC registration/licensing** for certain electronic-service providers and digital-platform operators is now actively operational.
+    15→* **Decree 44/2025** amended the 2023 INTIC regime.
+    16→* **Cybersecurity Law No. 13/2026** is now in force.
+    17→* **Cybercrime Law No. 14/2026** is now in force.
+    18→* A comprehensive **Personal Data Protection Law is still not in force**; the proposal is before the Assembly of the Republic.
+    19→* New **Cloud Computing** and **Data Centre** regulations exist.
+    20→* Mozambique has created a **National Artificial Intelligence Commission**, but there is not yet a comprehensive AI law equivalent to the EU AI Act.
+    21→
+    22→That means we should build ROHI's legal architecture **now**, rather than waiting for the data-protection bill.
+    23→
+    24→---
+    25→
+    26→# 2. Electronic Transactions — Law No. 3/2017
+    27→
+    28→This is one of the most important laws for ROHI.
+    29→
+    30→The Electronic Transactions Law applies broadly to public and private persons/entities using ICT in their activities, including electronic and commercial transactions. ([INTIC][1])
+    31→
+    32→It covers:
+    33→
+    34→* electronic transactions
+    35→* electronic commerce
+    36→* electronic communications
+    37→* electronic records/messages
+    38→* electronic contracts
+    39→* electronic marketing
+    40→* consumer protection in e-commerce
+    41→* electronic payments
+    42→* personal-data processing
+    43→* intermediary electronic service providers
+    44→
+    45→### What this means for ROHI
+    46→
+    47→ROHI's website should be designed assuming that electronic interactions and records can have legal significance.
+    48→
+    49→So we should maintain:
+    50→
+    51→* clear identification of ROHI
+    52→* accessible Terms
+    53→* Privacy Policy
+    54→* appropriate consent/notice mechanisms
+    55→* records of important transactions
+    56→* clear commercial communications
+    57→* secure forms
+    58→* appropriate security controls
+    59→* proper records of client acceptance where online contracting is used
+    60→
+    61→The law also recognizes evidentiary value in electronic messages, with reliability assessed based on factors such as how information was generated, stored, transmitted and received, and whether its integrity can be maintained. ([Scribd][2])
+    62→
+    63→That is another reason we should build proper systems for **acceptance, timestamps, versions and records**, rather than simply having a PDF somewhere on the website.
+    64→
+    65→---
+    66→
+    67→# 3. Electronic marketing
+    68→
+    69→This is particularly relevant because ROHI will eventually use:
+    70→
+    71→* email
+    72→* WhatsApp
+    73→* LinkedIn
+    74→* newsletters
+    75→* lead forms
+    76→* AI-assisted lead qualification
+    77→* potentially automated follow-ups
+    78→
+    79→The Electronic Transactions Law requires electronic advertising/marketing to be identifiable as commercial activity. It also establishes rules around direct marketing communications and gives recipients mechanisms to opt out. ([Scribd][2])
+    80→
+    81→### ROHI should therefore have:
+    82→
+    83→**Marketing consent / preference management**
+    84→
+    85→and every marketing communication should make it reasonably clear:
+    86→
+    87→> who is communicating, why, and how the recipient can stop receiving marketing.
+    88→
+    89→Don't build a system where someone submits a contact form and automatically gets dumped into unlimited marketing without appropriate notice/control.
+    90→
+    91→---
+    92→
+    93→# 4. INTIC registration and licensing
+    94→
+    95→This is probably the most important issue we need to investigate specifically for ROHI.
+    96→
+    97→Mozambique's **Decree 59/2023**, as amended by **Decree 44/2025**, establishes registration/licensing for:
+    98→
+    99→* Intermediate Electronic Service Providers
+   100→* Digital Platform Operators
+   101→
+   102→The regime applies to qualifying services offered to recipients located in Mozambique. ([INTIC][3])
+   103→
+   104→And this is **not theoretical anymore**.
+   105→
+   106→INTIC began the mandatory licensing process in December 2025 and has been actively implementing it during 2026. INTIC stated that entities covered by the regime should comply even if they do not have a physical establishment in Mozambique. ([INTIC][4])
+   107→
+   108→As recently as September/October 2026, INTIC was reporting active licensing and regulatory implementation. ([INTIC][5])
+   109→
+   110→### But here's the important distinction for ROHI
+   111→
+   112→I **would not automatically conclude that ROHI's corporate website itself requires an INTIC platform licence.**
+   113→
+   114→The regulation is aimed at particular categories of electronic intermediaries and digital platforms.
+   115→
+   116→The original regulation identifies intermediary categories such as:
+   117→
+   118→* mere conduit
+   119→* caching
+   120→* hosting
+   121→* other approved intermediary services
+   122→
+   123→and digital-platform categories such as:
+   124→
+   125→* digital marketplace
+   126→* digital search
+   127→* digital repository
+   128→* digital communication
+   129→* digital community
+   130→* digital payment
+   131→* other approved platforms. ([INTIC][3])
+   132→
+   133→The 2025 amendment also excludes providers already regulated/licensed under the telecommunications/postal framework. ([INTIC][6])
+   134→
+   135→### Where ROHI gets interesting
+   136→
+   137→ROHI isn't simply a marketing website.
+   138→
+   139→Your planned business includes:
+   140→
+   141→> custom systems + SaaS/product systems + embedded AI + subscriptions + potentially hosting/managed services.
+   142→
+   143→If ROHI eventually **operates a SaaS platform on behalf of clients**, hosts data, operates a platform used by third parties, or provides a service falling into one of INTIC's regulated categories, the classification question becomes much more important.
+   144→
+   145→The 2023 regulation also requires technical information concerning architecture, infrastructure, database location, security and data protection as part of registration requirements. ([INTIC][3])
+   146→
+   147→### My recommendation
+   148→
+   149→Before ROHI launches its first commercial platform:
+   150→
+   151→**Ask INTIC for a written classification/confirmation of which ROHI activities require registration/licensing.**
+   152→
+   153→Don't guess.
+   154→
+   155→That gives us much stronger footing than simply putting:
+   156→
+   157→> "INTIC compliant"
+   158→
+   159→on the website.
+   160→
+   161→---
+   162→
+   163→# 5. INTIC registration requirements
+   164→
+   165→The original regulation says registration documentation can include:
+   166→
+   167→* company NUIT
+   168→* legal entity certificate
+   169→* domain registration evidence
+   170→* public IP/ASN information
+   171→* description of services
+   172→* technical architecture
+   173→* infrastructure diagrams
+   174→* database location
+   175→* security information
+   176→* data-protection information. ([INTIC][3])
+   177→
+   178→INTIC's February 2026 notice confirms that registration is a prerequisite to licensing and that entities not yet registered should register and request licensing. ([INTIC][7])
+   179→
+   180→The current licensing regime also provides for a fixed licensing fee equivalent to one public-service minimum wage, following the 2025 amendments. ([INTIC][6])
+   181→
+   182→So **INTIC registration/licensing should become a business-launch checklist item for ROHI**, subject to the classification determination.
+   183→
+   184→---
+   185→
+   186→# 6. Personal data protection — current position
+   187→
+   188→This area needs particular care because your earlier material described the proposed law as "pending", and that is **still essentially the current position**.
+   189→
+   190→The comprehensive Personal Data Protection Bill was approved by the Council of Ministers in March 2026 and submitted to the Assembly of the Republic. INTIC was still describing it as a proposal under parliamentary consideration in September 2026. ([INTIC][8])
+   191→
+   192→So I would **not write on ROHI's website:**
+   193→
+   194→> "ROHI complies with Mozambique's Personal Data Protection Law."
+   195→
+   196→There isn't yet a comprehensive enacted law by that name to make that statement straightforward.
+   197→
+   198→But that absolutely does **not** mean ROHI can ignore privacy.
+   199→
+   200→---
+   201→
+   202→# 7. What applies to personal data right now?
+   203→
+   204→There are already important protections.
+   205→
+   206→## Constitution
+   207→
+   208→Article 71 of the Constitution protects personal data and restricts certain processing of individually identifiable information. It also gives individuals rights concerning access to data about them and correction. ([Portal do Governo][9])
+   209→
+   210→## Electronic Transactions Law
+   211→
+   212→The Electronic Transactions Law contains specific provisions on electronic personal data.
+   213→
+   214→Among other things, it requires:
+   215→
+   216→* accuracy
+   217→* completeness
+   218→* updating
+   219→* confidentiality
+   220→* specification of the purpose of collection
+   221→* identification of the processor
+   222→* limiting subsequent use to stated purposes
+   223→* protection against unauthorized access, loss, destruction, modification or disclosure
+   224→
+   225→and provides rights concerning access, information, objection, removal, rectification and completion. ([INTIC][1])
+   226→
+   227→INTIC itself is actively using these provisions in its regulatory/fiscalisation work. Its current questionnaire specifically asks organizations about:
+   228→
+   229→* authentication
+   230→* prevention of data leaks
+   231→* incident response
+   232→* cookies/tracking
+   233→* whether users are informed
+   234→* whether users can manage privacy preferences. ([INTIC][10])
+   235→
+   236→That is extremely relevant to ROHI.
+   237→
+   238→---
+   239→
+   240→# 8. ROHI's AI chatbot makes privacy more important
+   241→
+   242→This is where our previous website plan needs to be taken seriously.
+   243→
+   244→The ROHI AI assistant may collect:
+   245→
+   246→* name
+   247→* company
+   248→* email
+   249→* phone/WhatsApp
+   250→* industry
+   251→* business problem
+   252→* current technology
+   253→* business processes
+   254→* project requirements
+   255→* conversation history
+   256→* potentially uploaded documents in future
+   257→
+   258→Some of this can become commercially sensitive even if it isn't legally "sensitive personal data."
+   259→
+   260→Therefore:
+   261→
+   262→### ROHI should not treat the chatbot as just a UI widget.
+   263→
+   264→It should have:
+   265→
+   266→**AI Privacy Notice**
+   267→
+   268→explaining:
+   269→
+   270→1. What information is collected
+   271→2. Why it is collected
+   272→3. How the AI processes it
+   273→4. Whether conversations are stored
+   274→5. How long they are retained
+   275→6. Whether humans can review conversations
+   276→7. Whether third-party AI providers process data
+   277→8. Whether data leaves Mozambique
+   278→9. Whether conversations are used to train models
+   279→10. How users can request access/correction/deletion where applicable
+   280→
+   281→This becomes particularly important when we start building the **embedded ROHI AI agent** you proposed earlier.
+   282→
+   283→---
+   284→
+   285→# 9. The future Data Protection Law should influence ROHI now
+   286→
+   287→Although the bill isn't yet law, I strongly recommend designing ROHI around its principles.
+   288→
+   289→The proposed framework includes concepts such as:
+   290→
+   291→* lawfulness
+   292→* fairness
+   293→* transparency
+   294→* purpose limitation
+   295→* data minimization
+   296→* consent
+   297→* access
+   298→* rectification
+   299→* deletion
+   300→* objection
+   301→* processing by third parties
+   302→* security
+   303→* breach notification
+   304→* international transfers
+   305→* controller/processor relationships. ([INTIC][8])
+   306→
+   307→This is exactly the direction ROHI should take.
+   308→
+   309→That way, when the legislation eventually comes into force, we aren't rebuilding everything.
+   310→
+   311→---
+   312→
+   313→# 10. International data transfers
+   314→
+   315→This is particularly important for ROHI.
+   316→
+   317→Suppose the website is hosted in one country, the database in another, and the AI API is operated by a company somewhere else.
+   318→
+   319→Data could potentially flow:
+   320→
+   321→**Mozambique → ROHI → cloud provider → AI provider → analytics provider → CRM**
+   322→
+   323→The proposed Mozambican data-protection framework specifically addresses international transfers and would impose conditions around adequate protection. ([INTIC][8])
+   324→
+   325→Even before the new law becomes effective, we should maintain an **internal data-flow map**.
+   326→
+   327→For every major ROHI system, we should know:
+   328→
+   329→> What data → goes where → processed by whom → stored where → for how long → why.
+   330→
+   331→This will become extremely valuable as ROHI grows.
+   332→
+   333→---
+   334→
+   335→# 11. Cookies
+   336→
+   337→This area requires a little nuance.
+   338→
+   339→I did **not find a standalone Mozambican cookie law equivalent to the EU ePrivacy Directive** in the current authoritative sources I reviewed.
+   340→
+   341→However, INTIC's own current compliance questionnaire explicitly asks whether an organization uses cookies/tracking and, if so, whether:
+   342→
+   343→> users are informed and can manage their privacy preferences. ([INTIC][10])
+   344→
+   345→Also, the INTIC digital-platform technical regulation contains security requirements around sensitive cookies. ([INTIC][11])
+   346→
+   347→So I would **not take the position that "Mozambique has no cookie law, therefore we don't need a cookie banner."**
+   348→
+   349→Instead:
+   350→
+   351→### ROHI should implement best-practice consent.
+   352→
+   353→Use three categories:
+   354→
+   355→**Essential**
+   356→
+   357→* security
+   358→* sessions
+   359→* core functionality
+   360→
+   361→**Analytics**
+   362→
+   363→* Google Analytics or equivalent
+   364→* traffic measurement
+   365→
+   366→**Marketing**
+   367→
+   368→* advertising pixels
+   369→* remarketing
+   370→* social tracking
+   371→
+   372→And ideally:
+   373→
+   374→> **Essential cookies active by default.
+   375→> Analytics/marketing activated only after user choice.**
+   376→
+   377→This is also a much better foundation if ROHI later serves European or international customers.
+   378→
+   379→---
+   380→
+   381→# 12. Consumer protection
+   382→
+   383→Mozambique has the **Consumer Protection Law No. 22/2009**, supplemented by **Decree No. 27/2016**, which regulates consumer protection.
+   384→
+   385→The law protects consumer rights including:
+   386→
+   387→* quality
+   388→* safety
+   389→* information
+   390→* economic interests
+   391→* compensation
+   392→* protection against misleading/abusive advertising. ([Oportunidades][12])
+   393→
+   394→But there is an important distinction for ROHI:
+   395→
+   396→### A business customer isn't automatically a "consumer."
+   397→
+   398→The legal concept depends on the transaction and whether the acquisition is for non-professional use. ([MDR Advogados Mozambique][13])
+   399→
+   400→Since ROHI's core market is businesses buying technology for business purposes, much of ROHI's commercial activity will be **B2B** rather than consumer commerce.
+   401→
+   402→Nevertheless, your public website should still follow consumer-grade principles:
+   403→
+   404→> clear, accurate, understandable, non-deceptive information.
+   405→
+   406→And if ROHI ever launches a consumer-facing product, the consumer regime becomes much more important.
+   407→
+   408→---
+   409→
+   410→# 13. E-commerce contracts
+   411→
+   412→If ROHI eventually sells subscriptions directly online — which is likely given the AI/subscription model we're designing — the Electronic Transactions Law becomes especially relevant.
+   413→
+   414→For consumer e-commerce, the law requires sufficient, accurate, clear and accessible information, including identification of the contracting parties and information necessary for an informed decision. ([Scribd][2])
+   415→
+   416→The law also addresses:
+   417→
+   418→* terms and conditions
+   419→* transaction records
+   420→* security/privacy information
+   421→* contract duration
+   422→* correction of errors before completion
+   423→* receipt/acknowledgment
+   424→* returns/refunds/complaints in the applicable consumer context. ([Scribd][2])
+   425→
+   426→So when we build the future **ROHI subscription checkout**, we should design the legal/UX flow together rather than adding legal text afterward.
+   427→
+   428→---
+   429→
+   430→# 14. Cybersecurity — major new development
+   431→
+   432→This is something the original research you pasted could not have captured.
+   433→
+   434→### Law No. 13/2026 — Cybersecurity Law
+   435→
+   436→This law is now in force.
+   437→
+   438→INTIC confirms that it establishes the legal framework for protecting Mozambique's cyberspace and for prevention, management and response to cybersecurity incidents. ([INTIC][14])
+   439→
+   440→### Law No. 14/2026 — Cybercrime Law
+   441→
+   442→Also now in force.
+   443→
+   444→It establishes the criminal/procedural framework for cybercrime, including mechanisms involving digital evidence and international cooperation. ([INTIC][15])
+   445→
+   446→Both entered into force on **29 September 2026**. ([INTIC][15])
+   447→
+   448→That means, as of today, ROHI is operating in a materially different regulatory environment than it would have been six months ago.
+   449→
+   450→---
+   451→
+   452→# 15. What this means technically for ROHI
+   453→
+   454→Security should not be something we put in the Terms and forget.
+   455→
+   456→ROHI should build:
+   457→
+   458→### Website
+   459→
+   460→* HTTPS
+   461→* secure headers
+   462→* secure forms
+   463→* bot/spam protection
+   464→* minimal data collection
+   465→* access controls
+   466→
+   467→### AI agent
+   468→
+   469→* authentication where necessary
+   470→* conversation access controls
+   471→* logging
+   472→* prompt/data separation
+   473→* protection against prompt injection
+   474→* no credentials/API keys requested
+   475→* no unnecessary sensitive information
+   476→* controlled retention
+   477→
+   478→### Client systems
+   479→
+   480→* role-based access
+   481→* authentication
+   482→* authorization
+   483→* encryption
+   484→* backups
+   485→* logging
+   486→* monitoring
+   487→* incident response
+   488→* recovery procedures
+   489→
+   490→### Internal ROHI
+   491→
+   492→* password manager
+   493→* MFA
+   494→* least-privilege access
+   495→* Git/security controls
+   496→* secrets management
+   497→* backup policy
+   498→* employee/founder access policy
+   499→
+   500→This is consistent with the direction of INTIC's current regulatory framework.
+   501→
+   502→---
+   503→
+   504→# 16. Cloud computing
+   505→
+   506→Another new area.
+   507→
+   508→**Decree 72/2025** established Mozambique's Cloud Computing Regulation.
+   509→
+   510→It applies to cloud-service providers operating in Mozambique, including providers that are not physically established in Mozambique. ([INTIC][16])
+   511→
+   512→This is important for ROHI because of our eventual recurring model.
+   513→
+   514→But there's a distinction:
+   515→
+   516→### If ROHI uses AWS/Azure/GCP/etc. as infrastructure
+   517→
+   518→That doesn't automatically make ROHI the cloud provider.
+   519→
+   520→### If ROHI itself starts selling a cloud-computing service
+   521→
+   522→Then the regulation becomes much more directly relevant.
+   523→
+   524→So for now:
+   525→
+   526→> **ROHI should be a technology/software provider using cloud infrastructure, not casually describe itself as a regulated cloud provider.**
+   527→
+   528→If that business model changes, we reassess.
+   529→
+   530→---
+   531→
+   532→# 17. Data centres
+   533→
+   534→Decree 71/2025 establishes a framework for construction, operation, registration and licensing of data centres. ([INTIC][17])
+   535→
+   536→This isn't immediately relevant if ROHI simply rents infrastructure from established cloud/data-centre providers.
+   537→
+   538→It becomes relevant if ROHI eventually operates its own data-centre infrastructure.
+   539→
+   540→---
+   541→
+   542→# 18. AI regulation
+   543→
+   544→This is an interesting one for ROHI.
+   545→
+   546→Mozambique created the **National Artificial Intelligence Commission (CNIA)** through Decree 14/2026. INTIC also identifies a proposed national AI strategy. ([INTIC][18])
+   547→
+   548→But I did **not find a comprehensive Mozambican AI Act currently in force** comparable to the EU AI Act.
+   549→
+   550→Therefore:
+   551→
+   552→**Do not claim "ROHI AI is legally compliant with Mozambique's AI law."**
+   553→
+   554→Instead, establish an internal ROHI AI governance framework.
+   555→
+   556→For example:
+   557→
+   558→* human oversight
+   559→* transparency
+   560→* privacy
+   561→* security
+   562→* accuracy limitations
+   563→* explainability where appropriate
+   564→* no unsupported guarantees
+   565→* responsible use of client data
+   566→* no training on client data without appropriate authorization
+   567→* clear distinction between AI assistance and human decision-making
+   568→
+   569→That is especially important for the AI-agent subscription model we just discussed.
+   570→
+   571→---
+   572→
+   573→# 19. The most important issue for ROHI: AI + client data
+   574→
+   575→This is where our business model and legal architecture intersect.
+   576→
+   577→Imagine:
+   578→
+   579→**Client buys ROHI ERP/system**
+   580→
+   581→↓
+   582→
+   583→System contains client/customer/employee data
+   584→
+   585→↓
+   586→
+   587→ROHI AI agent reads that information
+   588→
+   589→↓
+   590→
+   591→AI answers questions and performs actions
+   592→
+   593→↓
+   594→
+   595→External AI API processes some request
+   596→
+   597→We need to establish contractually and technically:
+   598→
+   599→### Who owns the data?
+   600→
+   601→Usually:
+   602→
+   603→**Client owns/control their business data.**
+   604→
+   605→### Who owns the software?
+   606→
+   607→**ROHI owns its underlying software/IP**, subject to the client's contractual rights.
+   608→
+   609→### Who owns AI-generated outputs?
+   610→
+   611→Must be defined contractually depending on the service and applicable law.
+   612→
+   613→### Can ROHI train models on client data?
+   614→
+   615→**Do not assume yes.**
+   616→
+   617→Our default position should be:
+   618→
+   619→> **Client data is not used to train general AI models unless expressly authorized under the applicable agreement.**
+   620→
+   621→That's a strong trust position.
+   622→
+   623→---
+   624→
+   625→# 20. What ROHI's legal website structure should now be
+   626→
+   627→I recommend the website have:
+   628→
+   629→### 1. Terms & Conditions
+   630→
+   631→Covers:
+   632→
+   633→* website use
+   634→* intellectual property
+   635→* acceptable use
+   636→* information accuracy
+   637→* third-party services
+   638→* AI assistant
+   639→* limitations
+   640→* liability
+   641→* links
+   642→* governing law
+   643→* disputes
+   644→* changes
+   645→
+   646→### 2. Privacy Policy
+   647→
+   648→Covers:
+   649→
+   650→* information collected
+   651→* purposes
+   652→* legal basis/grounds
+   653→* contact forms
+   654→* chatbot
+   655→* analytics
+   656→* CRM
+   657→* third parties
+   658→* AI providers
+   659→* international processing
+   660→* retention
+   661→* security
+   662→* user rights
+   663→* contact/privacy requests
+   664→
+   665→### 3. Cookie Policy
+   666→
+   667→Covers:
+   668→
+   669→* essential cookies
+   670→* analytics
+   671→* marketing
+   672→* third-party cookies
+   673→* duration
+   674→* preference management
+   675→
+   676→### 4. AI Assistant Notice
+   677→
+   678→This deserves its own document/notice because AI is central to ROHI.
+   679→
+   680→Explain:
+   681→
+   682→* AI-generated responses
+   683→* limitations
+   684→* no guarantee of accuracy
+   685→* no professional/legal/financial advice
+   686→* conversation processing
+   687→* human escalation
+   688→* data handling
+   689→* third-party AI providers
+   690→* no confidential credentials
+   691→
+   692→### 5. Client Agreement
+   693→
+   694→**Not public website Terms.**
+   695→
+   696→For paying customers:
+   697→
+   698→* Statement of Work
+   699→* Master Services Agreement
+   700→* Subscription Agreement
+   701→* Data Processing provisions
+   702→* SLA
+   703→* IP ownership
+   704→* payment
+   705→* support
+   706→* change requests
+   707→* termination
+   708→* liability
+   709→* security
+   710→* AI provisions
+   711→
+   712→This is where ROHI's real commercial protection belongs.
+   713→
+   714→---
+   715→
+   716→# 21. What I would NOT put on the website
+   717→
+   718→Avoid claims such as:
+   719→
+   720→> "ISO compliant"
+   721→
+   722→> "Fully compliant with Mozambican data protection law"
+   723→
+   724→> "INTIC certified"
+   725→
+   726→> "100% secure"
+   727→
+   728→> "AI outputs are always accurate"
+   729→
+   730→> "Your data never leaves Mozambique"
+   731→
+   732→unless we have actually established those facts.
+   733→
+   734→Instead use precise language.
+   735→
+   736→For example:
+   737→
+   738→> **ROHI is committed to responsible, secure and transparent technology practices and designs its systems with applicable Mozambican requirements and recognized security principles in mind.**
+   739→
+   740→That's much safer.
+   741→
+   742→---
+   743→
+   744→# 22. ROHI's compliance priorities
+   745→
+   746→I'd rank the work like this:
+   747→
+   748→| Priority    | Area             | ROHI action                                                        |
+   749→| ----------- | ---------------- | ------------------------------------------------------------------ |
+   750→| 🔴 Critical | INTIC            | Determine whether ROHI's activities require registration/licensing |
+   751→| 🔴 Critical | Privacy          | Build Privacy Policy + data-handling framework                     |
+   752→| 🔴 Critical | Cybersecurity    | Implement security controls under the new 2026 environment         |
+   753→| 🔴 Critical | AI               | Establish AI/data governance before deploying agents               |
+   754→| 🟠 High     | Cookies          | Implement consent/preferences for non-essential tracking           |
+   755→| 🟠 High     | Terms            | Draft strong website Terms                                         |
+   756→| 🟠 High     | Client contracts | Build MSA/SOW/subscription legal structure                         |
+   757→| 🟠 High     | Third-party AI   | Review provider terms/data-processing arrangements                 |
+   758→| 🟡 Medium   | Consumer law     | Prepare for B2C if ROHI ever sells directly to consumers           |
+   759→| 🟡 Medium   | Cloud            | Reassess if ROHI becomes a cloud provider                          |
+   760→| 🟡 Medium   | Data centre      | Only relevant if ROHI operates infrastructure                      |
+   761→| 🟢 Ongoing  | AI regulation    | Monitor CNIA/national AI framework                                 |
+   762→
+   763→---
+   764→
+   765→# 23. My biggest recommendation for ROHI
+   766→
+   767→Don't think of this as:
+   768→
+   769→> **"We need Terms and Conditions for our website."**
+   770→
+   771→Think of it as:
+   772→
+   773→# **ROHI Digital Trust & Compliance Architecture**
+   774→
+   775→Because ROHI isn't going to remain a simple website.
+   776→
+   777→Our strategy now involves:
+   778→
+   779→**Website → Lead capture → AI assistant → CRM → Custom systems → SaaS → Embedded AI → Subscriptions → Client data → Cloud infrastructure → AI providers**
+   780→
+   781→The legal and technical architecture needs to grow with that.
+   782→
+   783→And the good news is that the current Mozambican framework actually gives us a pretty clear direction.
+   784→
+   785→### The immediate sequence I recommend
+   786→
+   787→**1. Determine ROHI's INTIC classification**
+   788→**2. Design the data map**
+   789→**3. Design the cookie/consent architecture**
+   790→**4. Create the AI data/privacy rules**
+   791→**5. Draft Terms & Conditions**
+   792→**6. Draft Privacy Policy**
+   793→**7. Draft Cookie Policy**
+   794→**8. Draft AI Assistant Notice**
+   795→**9. Create Client MSA/SOW framework**
+   796→**10. Build an internal ROHI Compliance Checklist**
+   797→
+   798→That should happen **before the website goes fully live and before we start putting the AI agent into production.**
+   799→
+   800→The most urgent item is **INTIC classification**, because the current regime is active and the question depends on exactly what ROHI will operate, host and sell. INTIC itself now provides registration/licensing processes and is actively enforcing the framework. ([INTIC][19])
+   801→
+   802→**Primary sources:** [INTIC — Registration & Licensing](https://intic.gov.mz/registo-e-licenciamento/?utm_source=chatgpt.com) · [INTIC — Sectorial Legislation](https://intic.gov.mz/sectorial/?utm_source=chatgpt.com) · [INTIC — Digital Services Licensing Requirements](https://intic.gov.mz/requisitos-de-licenciamento-de-provedores-intermediarios-de-servicos-electronicos-e-de-operadores-de-plataformas-digitais/?utm_source=chatgpt.com)
+   803→
+   804→This research also gives us enough information to start building the **ROHI SYSTEMS Digital Trust & Compliance Framework v1.0** as the next document, rather than jumping straight into generic legal wording.
+   805→
+   806→[1]: https://intic.gov.mz/wp-content/uploads/2021/04/Lei-das-Transaccoes-Electronicas.pdf?utm_source=chatgpt.com "I SÉRIE — NÚMERO 5"
+   807→[2]: https://pt.scribd.com/document/581027877/Lei-3-2017-BR-5-I-SERIE-2017-3?utm_source=chatgpt.com "Lei n.º 3/2017 sobre Transações Eletrônicas | PDF | Informação | Comunicação"
+   808→[3]: https://www.intic.gov.mz/wp-content/uploads/2023/11/BR_206_I_SERIE_2023.pdf "BR_206_I_SÉRIE_2023.indd"
+   809→[4]: https://intic.gov.mz/mocambique-entra-hoje-numa-nova-era-digital-com-o-arranque-do-licenciamento-obrigatorio-de-plataformas-digitais-e-servicos-electronicos/?utm_source=chatgpt.com "Moçambique entra hoje numa nova era digital com o arranque do licenciamento obrigatório de plataformas digitais e serviços electrónicos – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   810→[5]: https://intic.gov.mz/mocambique-e-brasil-apostam-em-solucoes-digitais-centradas-no-cidadao-2/?utm_source=chatgpt.com "INTIC E MOVITEL REFORÇAM DIÁLOGO INSTITUCIONAL PARA UMA TRANSFORMAÇÃO DIGITAL MAIS SEGURA, CONFIÁVEL E CENTRADA NO CIDADÃO – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   811→[6]: https://intic.gov.mz/wp-content/uploads/2025/12/BR_229_I_SERIE_2025.pdf?utm_source=chatgpt.com "I SÉRIE ­— Número 229"
+   812→[7]: https://intic.gov.mz/wp-content/uploads/2026/02/Proposta-de-Aviso_Inicio-de-Licenciamento_assinado.pdf?utm_source=chatgpt.com "Autoridade Reguladora de TIC"
+   813→[8]: https://intic.gov.mz/proposta-de-lei-de-proteccao-de-dados-pessoais-segue-para-debate-na-assembleia-da-republica/?utm_source=chatgpt.com "Proposta de Lei de Protecção de Dados Pessoais segue para debate na Assembleia da República – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   814→[9]: https://www.portaldogoverno.gov.mz/por/content/download/4423/32819/version/1/file/constituicao.pdf?utm_source=chatgpt.com "CONSTITUIÇÃO DA REPÚBLICA"
+   815→[10]: https://intic.gov.mz/questionario-de-fiscalizacao-das-tic/?utm_source=chatgpt.com "Questionário de Fiscalização das TIC – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   816→[11]: https://www.intic.gov.mz/wp-content/uploads/2023/11/BR_206_I_SERIE_2023.pdf?utm_source=chatgpt.com "BR_206_I_SÉRIE_2023.indd"
+   817→[12]: https://oportunidades.fni.gov.mz/assets/Documentos/Legislacoes/Act.Ecocn%C3%B3mica/Transversal/Lei%20de%20defesa%20do%20consumidor.pdf?utm_source=chatgpt.com "Segunda-feira, 28 de Setembro de 2009"
+   818→[13]: https://www.mdradvogados.com/xms/files/2021/Vida_Judiciaria_AO_MRL_Breves_notas_sobre_a_proteccao_dos_consumidores_em_Mocambique_31OUT2021.pdf?utm_source=chatgpt.com "CISION
+   819→
+   820→VidaJudiciária
+   821→
+   822→ID: 96118679  
+   823→31-10-2021"
+   824→[14]: https://intic.gov.mz/entrada-em-vigor-das-leis-de-seguranca-e-crimes-ciberneticos-reforca-proteccao-do-espaco-digital-em-mocambique/?utm_source=chatgpt.com "ENTRADA EM VIGOR DAS LEIS DE SEGURANÇA E CRIMES CIBERNÉTICOS REFORÇA PROTECÇÃO DO ESPAÇO DIGITAL EM MOÇAMBIQUE – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   825→[15]: https://intic.gov.mz/mocambique-publica-no-boletim-da-republica-as-leis-da-seguranca-cibernetica-e-dos-crimes-ciberneticos/?utm_source=chatgpt.com "Moçambique publica no Boletim da República as Leis da Segurança Cibernética e dos Crimes Cibernéticos – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   826→[16]: https://intic.gov.mz/wp-content/uploads/2026/02/TG_Regulamento-de-Centro-de-Computacao-em-Nuvem_Dec-72_2025_.pdf?utm_source=chatgpt.com "Edição electrónica da Pandora Box, Lda."
+   827→[17]: https://intic.gov.mz/ja-ha-regras-para-a-construcao-de-centros-de-dados-e-para-a-operacao-de-plataformas-de-computacao-em-nuvem-em-mocambique/?utm_source=chatgpt.com "Já há regras para a construção de centros de dados e para a operação de Plataformas de Computação em Nuvem em  Moçambique – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   828→[18]: https://intic.gov.mz/sectorial/?utm_source=chatgpt.com "Sectorial – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   829→[19]: https://intic.gov.mz/requisitos-de-licenciamento-de-provedores-intermediarios-de-servicos-electronicos-e-de-operadores-de-plataformas-digitais/?utm_source=chatgpt.com "Requisitos de Licenciamento de Provedores Intermediários de Serviços Electrónicos e de Operadores de Plataformas Digitais – Instituto Nacional de Tecnologias de Informação e Comunicação"
+   830→

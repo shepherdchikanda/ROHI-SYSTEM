@@ -14,6 +14,9 @@ const bodySchema = z.object({
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const DEFAULT_MODEL = "xingchen-agi/xing4.0-29b-a4b:free";
+
 export async function POST(req: Request) {
   let body: unknown;
   try {
@@ -28,22 +31,23 @@ export async function POST(req: Request) {
   const parsed = bodySchema.safeParse(body);
   if (!parsed.success) {
     return new Response(
-      JSON.stringify({
-        error: "Validation failed",
-        issues: parsed.error.issues,
-      }),
+      JSON.stringify({ error: "Validation failed", issues: parsed.error.issues }),
       { status: 422, headers: { "Content-Type": "application/json" } },
     );
   }
 
+  // Check API key
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    return new Response(
+      "The AI assistant isn't configured yet. Set OPENROUTER_API_KEY in the .env file. See the README for setup instructions.",
+      { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } },
+    );
+  }
+
   // Prepend the ROHI agent system prompt + the confirmed knowledge base.
-  // The prompt instructs the assistant to treat the KB as the source of truth
-  // and to never invent beyond it.
   const messages = [
-    {
-      role: "system" as const,
-      content: ROHI_AGENT_SYSTEM_PROMPT,
-    },
+    { role: "system" as const, content: ROHI_AGENT_SYSTEM_PROMPT },
     {
       role: "system" as const,
       content: `# ROHI SYSTEMS KNOWLEDGE BASE — confirmed facts (source of truth)\nUse this as the primary source for ROHI-specific information. Do not invent beyond what is documented here. If a fact is not in this knowledge base, say you do not have enough confirmed information.\n\n${ROHI_KNOWLEDGE_BASE}`,
@@ -51,48 +55,67 @@ export async function POST(req: Request) {
     ...parsed.data.messages,
   ];
 
-  const ZAI = (await import("z-ai-web-dev-sdk")).default;
-  const zai = await ZAI.create();
+  const model = process.env.OPENROUTER_MODEL || DEFAULT_MODEL;
 
-  let upstreamStream: ReadableStream<Uint8Array> | null = null;
+  // Call OpenRouter (OpenAI-compatible streaming API)
+  let upstreamResponse: Response;
   try {
-    const result = await zai.chat.completions.create({
-      messages,
-      stream: true,
-      thinking: { type: "disabled" },
+    upstreamResponse = await fetch(OPENROUTER_URL, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://rohi.systems",
+        "X-Title": "ROHI SYSTEMS — AI Assistant",
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        stream: true,
+      }),
     });
-    if (result instanceof ReadableStream) {
-      upstreamStream = result;
-    } else if (
-      result &&
-      typeof result === "object" &&
-      result.body instanceof ReadableStream
-    ) {
-      upstreamStream = result.body;
-    } else {
-      // Non-streaming fallback (SDK returned full JSON)
-      const text =
-        result?.choices?.[0]?.message?.content ??
-        "I'm not able to respond right now. Please try again.";
-      return new Response(text, {
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-      });
-    }
   } catch (err) {
-    console.error("[chat] upstream error", err);
+    console.error("[chat] upstream fetch error", err);
     return new Response(
-      "I'm having trouble responding right now. Please try again in a moment, or use the contact form to reach the ROHI team.",
+      "I'm having trouble connecting right now. Please try again in a moment, or use the contact form to reach the ROHI team.",
       { status: 502, headers: { "Content-Type": "text/plain; charset=utf-8" } },
     );
   }
 
+  if (!upstreamResponse.ok || !upstreamResponse.body) {
+    // Read the error body for diagnostics
+    let errText = "";
+    try {
+      errText = await upstreamResponse.text();
+    } catch { /* ignore */ }
+    console.error("[chat] upstream error", upstreamResponse.status, errText);
+    // Return a user-friendly message (don't leak the raw API error)
+    const friendly =
+      upstreamResponse.status === 401
+        ? "The AI assistant's API key isn't valid. Please check the OPENROUTER_API_KEY in the .env file."
+        : upstreamResponse.status === 429
+          ? "The AI assistant is getting too many requests right now. Please try again in a moment."
+          : upstreamResponse.status === 402
+            ? "The AI assistant's account has no credits. Please add credits at openrouter.ai."
+            : "I'm having trouble responding right now. Please try again, or use the contact form to reach the ROHI team.";
+    return new Response(friendly, {
+      status: 502,
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
+  }
+
+  const upstreamStream = upstreamResponse.body;
+
   // Parse the upstream SSE stream and emit plain-text deltas to the client.
+  // OpenRouter uses the standard OpenAI SSE format:
+  //   data: {"choices":[{"delta":{"content":"..."}}]}
+  //   data: [DONE]
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();
 
   const clientStream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      const reader = upstreamStream!.getReader();
+      const reader = upstreamStream.getReader();
       let buffer = "";
       let done = false;
       try {
@@ -101,80 +124,49 @@ export async function POST(req: Request) {
           if (readerDone) break;
           buffer += decoder.decode(value, { stream: true });
 
-          // SSE events are separated by double newlines
           const lines = buffer.split("\n");
           buffer = lines.pop() ?? "";
 
           for (const rawLine of lines) {
             const line = rawLine.trim();
-            if (!line) continue;
-            if (line.startsWith(":")) continue; // SSE comment / heartbeat
+            if (!line || line.startsWith(":")) continue;
             if (!line.startsWith("data:")) continue;
             const data = line.slice(5).trim();
-            if (data === "[DONE]") {
-              done = true;
-              break;
-            }
+            if (data === "[DONE]") { done = true; break; }
             try {
               const json = JSON.parse(data);
-              const delta =
-                json?.choices?.[0]?.delta?.content ??
-                json?.choices?.[0]?.message?.content ??
-                "";
-              if (delta) {
-                controller.enqueue(encoder.encode(delta));
-              }
-            } catch {
-              // Partial JSON — ignore, will be completed next chunk
-            }
+              // Only forward content deltas (skip reasoning_content)
+              const delta = json?.choices?.[0]?.delta?.content ??
+                json?.choices?.[0]?.message?.content ?? "";
+              if (delta) controller.enqueue(encoder.encode(delta));
+            } catch { /* partial JSON — ignore */ }
           }
         }
-        // Flush any remaining buffered line (only if not already done)
         if (!done && buffer.startsWith("data:")) {
           const data = buffer.slice(5).trim();
           if (data && data !== "[DONE]") {
             try {
               const json = JSON.parse(data);
-              const delta =
-                json?.choices?.[0]?.delta?.content ??
-                json?.choices?.[0]?.message?.content ??
-                "";
+              const delta = json?.choices?.[0]?.delta?.content ??
+                json?.choices?.[0]?.message?.content ?? "";
               if (delta) controller.enqueue(encoder.encode(delta));
-            } catch {
-              /* ignore */
-            }
+            } catch { /* ignore */ }
           }
         }
       } catch (err) {
         console.error("[chat] stream read error", err);
         try {
-          controller.enqueue(
-            encoder.encode(
-              "\n\n[I encountered an issue mid-response. Please reach out via the Contact page if this continues.]",
-            ),
-          );
-        } catch {
-          /* controller already closed */
-        }
+          controller.enqueue(encoder.encode(
+            "\n\n[I encountered an issue mid-response. Please reach out via the Contact page if this continues.]",
+          ));
+        } catch { /* controller already closed */ }
       } finally {
-        try {
-          reader.releaseLock();
-        } catch {
-          /* ignore */
-        }
-        try {
-          controller.close();
-        } catch {
-          /* already closed (e.g. [DONE] path or cancel) */
-        }
+        try { reader.releaseLock(); } catch { /* ignore */ }
+        try { controller.close(); } catch { /* already closed */ }
       }
     },
     cancel() {
-      try {
-        upstreamStream!.cancel();
-      } catch {
-        /* ignore */
-      }
+      try { upstreamStream.cancel(); } catch { /* ignore */ }
     },
   });
 

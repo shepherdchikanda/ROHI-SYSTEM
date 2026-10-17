@@ -61,3 +61,4 @@ dev.log
 server.log
 agent-ctx/
 .z-ai-config
+!.env.example
