@@ -66,7 +66,7 @@ export async function POST(req: Request) {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://rohi.systems",
-        "X-Title": "ROHI SYSTEMS — AI Assistant",
+        "X-Title": "ROHI SYSTEMS - AI Assistant",
       },
       body: JSON.stringify({
         model,
