@@ -15,7 +15,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_MODEL = "xingchen-agi/xing4.0-29b-a4b:free";
+const DEFAULT_MODEL = "nvidia/nemotron-3.5-super-vl:free";
 
 export async function POST(req: Request) {
   let body: unknown;
