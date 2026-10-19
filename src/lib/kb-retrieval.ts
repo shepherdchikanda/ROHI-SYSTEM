@@ -10,6 +10,14 @@ type Section = { title: string; content: string; keywords: string[] };
 const SYNONYMS: Record<string, string[]> = {
   cost: ["pricing", "price", "charge"],
   charges: ["pricing", "price", "cost"],
+  price: ["pricing", "cost"],
+  prices: ["pricing", "price", "cost"],
+  charge: ["pricing", "price", "cost"],
+  rate: ["pricing", "price"],
+  fee: ["pricing", "price"],
+  quote: ["pricing", "price"],
+  rates: ["pricing", "price"],
+  fees: ["pricing", "price"],
   expensive: ["pricing", "price"],
   money: ["pricing", "price"],
   budget: ["pricing", "price"],
@@ -43,6 +51,16 @@ const SYNONYMS: Record<string, string[]> = {
   certification: ["honesty", "compliance"],
   secure: ["security", "honesty"],
 };
+
+// Simple stemmer: strip common suffixes for better matching
+function stem(word: string): string {
+  if (word.length > 4) {
+    if (word.endsWith("ing")) return word.slice(0, -3);
+    if (word.endsWith("ed")) return word.slice(0, -2);
+  }
+  if (word.length > 3 && word.endsWith("s")) return word.slice(0, -1);
+  return word;
+}
 
 function parseSections(): Section[] {
   const sections: Section[] = [];
@@ -104,8 +122,11 @@ export function retrieveRelevantKB(
   const scored = sections.map((section) => {
     let score = 0;
     for (const word of expandedWords) {
+      const stemmed = stem(word);
       if (section.keywords.includes(word)) score += 2;
       if (section.keywords.some((kw) => kw.includes(word) || word.includes(kw))) score += 1;
+      // Stemmed match (e.g., "pricing" matches "prices" → "pric" == "pric")
+      if (section.keywords.some((kw) => stem(kw) === stemmed)) score += 2;
     }
     for (const word of questionWords) {
       if (section.title.includes(word)) score += 3;
