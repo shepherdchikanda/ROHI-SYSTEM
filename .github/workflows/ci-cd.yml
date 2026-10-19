@@ -58,8 +58,15 @@ jobs:
         run: bunx tsc --noEmit
 
       # The repo has no test script yet. This runs one automatically once you add it.
-      - name: Tests (if a "test" script exists)
-        run: bun run --if-present test
+      # (Not `bun run --if-present test`: with no script, Bun falls back to the system
+      # `test` binary and exits 1.)
+      - name: Tests (only if a "test" script exists)
+        run: |
+          if jq -e '.scripts.test' package.json > /dev/null; then
+            bun run test
+          else
+            echo "No test script defined yet - skipping."
+          fi
 
   # ------------------------------------------------------------- SHELL SCRIPTS
   shellcheck:
