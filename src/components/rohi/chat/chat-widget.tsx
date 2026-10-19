@@ -523,10 +523,22 @@ function MessageBubble({ msg }: { msg: Msg }) {
                 li: ({ children }) => <li className="leading-relaxed">{children}</li>,
                 h2: ({ children }) => <h2 className="text-sm font-bold mt-2 mb-1">{children}</h2>,
                 a: ({ href, children }) => {
-                  if (href && href.startsWith("/")) {
-                    return <a href={href} className="inline-flex items-center gap-0.5 rounded bg-[#20C7C9]/10 px-1.5 py-0.5 text-[#20C7C9] font-semibold hover:bg-[#20C7C9]/20 no-underline">{children}</a>;
+                  if (!href) return <span>{children}</span>;
+                  // Convert absolute site URLs to relative paths
+                  let url = href;
+                  if (url.includes("rohisystems.com") || url.includes("rohi-system.com")) {
+                    try { url = new URL(url).pathname; } catch {}
                   }
-                  return <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#20C7C9] font-semibold underline underline-offset-2">{children}</a>;
+                  // mailto links
+                  if (url.startsWith("mailto:")) {
+                    return <a href={url} className="inline-flex items-center gap-0.5 rounded bg-[#20C7C9]/10 px-1.5 py-0.5 text-[#20C7C9] font-semibold hover:bg-[#20C7C9]/20 no-underline">{children}</a>;
+                  }
+                  // Internal links — navigate in SAME tab (not new tab)
+                  if (url.startsWith("/")) {
+                    return <a href={url} className="inline-flex items-center gap-0.5 rounded bg-[#20C7C9]/10 px-1.5 py-0.5 text-[#20C7C9] font-semibold hover:bg-[#20C7C9]/20 no-underline cursor-pointer">{children}</a>;
+                  }
+                  // External links — open in new tab
+                  return <a href={url} target="_blank" rel="noopener noreferrer" className="text-[#20C7C9] font-semibold underline underline-offset-2">{children}</a>;
                 },
                 code: ({ children }) => <code className="rounded bg-gray-100 px-1 py-0.5 text-xs">{children}</code>,
                 blockquote: ({ children }) => <blockquote className="border-l-2 border-[#20C7C9] pl-3 italic text-gray-600">{children}</blockquote>,
