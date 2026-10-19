@@ -49,11 +49,21 @@ export async function POST(req: Request) {
   }
 
   // Prepend the ROHI agent system prompt + the confirmed knowledge base.
-  // System prompt as system message, KB as context (separate = model processes both)
+  // RAG-lite: retrieve only the relevant KB sections for this question
+  // Uses the latest user message for retrieval (not assistant messages)
+  const allMsgs = parsed.data.messages;
+  const lastUserMsg = [...allMsgs].reverse().find((m) => m.role === "user");
+  const relevantKB = lastUserMsg
+    ? retrieveRelevantKB(lastUserMsg.content)
+    : ROHI_KNOWLEDGE_BASE;
+
+  // Combine system prompt + retrieved KB sections into ONE system message
+  // (model treats KB as authoritative system-level reference material)
   const messages = [
-    { role: "system" as const, content: ROHI_AGENT_SYSTEM_PROMPT },
-    { role: "user" as const, content: `Here is the ROHI SYSTEMS knowledge base. Use it to answer questions about ROHI. If a fact is not here, say you don't have enough confirmed information.\n\n${ROHI_KNOWLEDGE_BASE}` },
-    { role: "assistant" as const, content: "Understood. I'll use this knowledge base to answer questions about ROHI SYSTEMS. What can I help with?" },
+    {
+      role: "system" as const,
+      content: `${ROHI_AGENT_SYSTEM_PROMPT}\n\n# ROHI SYSTEMS KNOWLEDGE BASE — relevant sections\nUse this as reference material to answer the user's question. If the answer is not in this information, say you don't have enough confirmed information. Do not invent beyond what is documented here.\n\n${relevantKB}`,
+    },
     ...parsed.data.messages,
   ];
 
