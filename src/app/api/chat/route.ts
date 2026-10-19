@@ -1,5 +1,6 @@
 import { ROHI_AGENT_SYSTEM_PROMPT } from "@/lib/rohi-agent-prompt";
 import { ROHI_KNOWLEDGE_BASE } from "@/lib/rohi-knowledge-base";
+import { retrieveRelevantKB } from "@/lib/kb-retrieval";
 import { z } from "zod";
 import { checkRateLimit, LIMITS } from "@/lib/rate-limit";
 
