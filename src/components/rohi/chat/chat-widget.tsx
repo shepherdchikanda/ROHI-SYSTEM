@@ -6,11 +6,15 @@ import { MessageSquare, X, Send, ArrowUpRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { RohiLogo } from "../rohi-logo";
+import ReactMarkdown from "react-markdown";
+import Link from "next/link";
 import { track } from "@/lib/analytics";
 
 type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
 
 const STORAGE_KEY = "rohi-chat-messages";
+const STORAGE_TS_KEY = "rohi-chat-saved-at";
+const HISTORY_MAX_AGE = 48 * 60 * 60 * 1000; // 48 hours
 const SESSION_KEY = "rohi-chat-session";
 const HANDOFF_KEY = "rohi-chat-handoff";
 
@@ -36,6 +40,8 @@ export function ChatWidget() {
   const [busy, setBusy] = useState(false);
   const [hasNew, setHasNew] = useState(false);
   const [handoffBusy, setHandoffBusy] = useState(false);
+  const [hasHistory, setHasHistory] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -50,13 +56,18 @@ export function ChatWidget() {
         sessionStorage.setItem(SESSION_KEY, sid);
       }
       sessionIdRef.current = sid;
-      // Restore saved conversation (localStorage)
+      // Restore saved conversation (localStorage) — only if < 48h old
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
+      const savedAt = Number(localStorage.getItem(STORAGE_TS_KEY) || 0);
+      const isFresh = Date.now() - savedAt < HISTORY_MAX_AGE;
+      if (saved && isFresh) {
         const parsed = JSON.parse(saved) as Msg[];
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setMessages(parsed);
+        if (Array.isArray(parsed) && parsed.length > 1) {
+          setHasHistory(true);
         }
+      } else if (saved && !isFresh) {
+        localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(STORAGE_TS_KEY);
+        localStorage.removeItem(STORAGE_TS_KEY);
       }
     } catch {
       /* ignore storage errors */
@@ -70,6 +81,7 @@ export function ChatWidget() {
         .filter((m) => !(m.streaming && m.content === ""))
         .map((m) => ({ role: m.role, content: m.content }));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(persistable));
+      localStorage.setItem(STORAGE_TS_KEY, String(Date.now()));
     } catch {
       /* ignore */
     }
@@ -164,6 +176,28 @@ export function ChatWidget() {
     setOpen(false);
     router.push("/contact");
   }, [handoffBusy, messages, router]);
+
+
+  function resumeHistory() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Msg[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+        }
+      }
+    } catch { /* ignore */ }
+    setHasHistory(false);
+  }
+
+  function dismissHistory() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_TS_KEY);
+    } catch { /* ignore */ }
+    setHasHistory(false);
+  }
 
   const send = useCallback(
     async (text: string) => {
@@ -356,11 +390,25 @@ export function ChatWidget() {
             {/* Messages */}
             <div
               ref={scrollRef}
-              className="flex-1 space-y-3 overflow-y-auto bg-cloud/40 px-3.5 py-4 scroll-thin"
+              className="flex-1 space-y-3 overflow-y-auto bg-[#f5f7fa] px-3.5 py-4 scroll-thin"
             >
               {messages.map((m, i) => (
                 <MessageBubble key={i} msg={m} />
               ))}
+              {/* Resume previous conversation prompt */}
+              {hasHistory && messages.length === 1 && !busy && (
+                <div className="rounded-lg border border-[#20C7C9]/30 bg-[#20C7C9]/5 p-3 text-center">
+                  <p className="text-xs text-[#667085] mb-2">You have a previous conversation saved (expires in 48h).</p>
+                  <div className="flex gap-2 justify-center">
+                    <button type="button" onClick={resumeHistory} className="rounded-md bg-[#0B1220] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#111a2e]">
+                      Continue
+                    </button>
+                    <button type="button" onClick={dismissHistory} className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-[#667085] hover:bg-gray-50">
+                      Start fresh
+                    </button>
+                  </div>
+                </div>
+              )}
               {/* Quick options show only after welcome, when not busy and last is assistant welcome */}
               {messages.length === 1 && !busy && (
                 <div className="flex flex-wrap gap-2 pt-1">
@@ -453,23 +501,43 @@ export function ChatWidget() {
 function MessageBubble({ msg }: { msg: Msg }) {
   const isUser = msg.role === "user";
   return (
-    <div
-      className={cn(
-        "flex w-full",
-        isUser ? "justify-end" : "justify-start",
-      )}
-    >
+    <div className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}>
       <div
         className={cn(
-          "max-w-[88%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
+          "max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
           isUser
-            ? "rounded-br-md bg-navy text-white"
-            : "rounded-bl-md border border-navy/10 bg-background text-ink",
+            ? "rounded-br-md bg-[#0B1220] text-white"
+            : "rounded-bl-md border border-gray-200 bg-white text-[#111827] shadow-sm",
         )}
       >
-        {msg.content}
+        {isUser ? (
+          <span className="whitespace-pre-wrap">{msg.content}</span>
+        ) : (
+          <div className="space-y-1.5">
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
+                strong: ({ children }) => <strong className="font-semibold text-[#0B1220]">{children}</strong>,
+                ul: ({ children }) => <ul className="ml-4 list-disc space-y-1">{children}</ul>,
+                ol: ({ children }) => <ol className="ml-4 list-decimal space-y-1">{children}</ol>,
+                li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                h2: ({ children }) => <h2 className="text-sm font-bold mt-2 mb-1">{children}</h2>,
+                a: ({ href, children }) => {
+                  if (href && href.startsWith("/")) {
+                    return <Link href={href} className="text-[#20C7C9] font-medium underline underline-offset-2">{children}</Link>;
+                  }
+                  return <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#20C7C9] font-medium underline underline-offset-2">{children}</a>;
+                },
+                code: ({ children }) => <code className="rounded bg-gray-100 px-1 py-0.5 text-xs">{children}</code>,
+                blockquote: ({ children }) => <blockquote className="border-l-2 border-[#20C7C9] pl-3 italic text-gray-600">{children}</blockquote>,
+              }}
+            >
+              {msg.content}
+            </ReactMarkdown>
+          </div>
+        )}
         {msg.streaming && msg.content && (
-          <span className="ml-0.5 inline-block size-1.5 translate-y-0.5 animate-pulse rounded-full bg-teal" />
+          <span className="ml-0.5 inline-block size-1.5 translate-y-0.5 animate-pulse rounded-full bg-[#20C7C9]" />
         )}
       </div>
     </div>
