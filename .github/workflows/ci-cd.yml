@@ -1,0 +1,335 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Supersede stale runs on the same ref, but never cancel a run on main mid-deploy.
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+# Least privilege by default. Jobs that need more ask for it explicitly.
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  # Dummy value so `prisma generate` and `next build` can run. Real secrets are never needed in CI.
+  DATABASE_URL: file:./ci-build.db
+  BUN_VERSION: "1.4.x"
+
+jobs:
+  # ------------------------------------------------------------------ QUALITY
+  quality:
+    name: Lint & type check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install (lockfile-exact)
+        run: bun install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
+      - name: Lint
+        run: bun run lint
+
+      # next.config.ts sets typescript.ignoreBuildErrors = true, so `next build` never
+      # type-checks. This step is the ONLY type gate. It starts non-blocking so existing
+      # errors don't stop you; once it is clean, set repo variable TYPECHECK_BLOCKING=true.
+      - name: Type check
+        continue-on-error: ${{ vars.TYPECHECK_BLOCKING != 'true' }}
+        run: bunx tsc --noEmit
+
+      # The repo has no test script yet. This runs one automatically once you add it.
+      - name: Tests (if a "test" script exists)
+        run: bun run --if-present test
+
+  # ------------------------------------------------------------- SHELL SCRIPTS
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          severity: error
+          ignore_paths: >-
+            node_modules
+            .next
+
+  # ------------------------------------------------------------------ SECURITY
+  security:
+    name: Secrets & dependency scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan for committed secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      # Starts non-blocking; set repo variable AUDIT_BLOCKING=true to fail on high+ advisories.
+      - name: Audit production dependencies
+        continue-on-error: ${{ vars.AUDIT_BLOCKING != 'true' }}
+        run: bun audit --prod --audit-level=high
+
+      - name: Review dependency changes in PR
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+  # --------------------------------------------------------------------- BUILD
+  build:
+    name: Production build
+    needs: [quality]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('bun.lock') }}-${{ hashFiles('src/**', 'public/**') }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ hashFiles('bun.lock') }}-
+            next-${{ runner.os }}-
+
+      - run: bun install --frozen-lockfile
+      - run: bunx prisma generate
+      - run: bun run build
+
+      # Guard: a build can exit 0 without producing the standalone server
+      # (e.g. someone removes output: "standalone" from next.config.ts).
+      - name: Verify standalone server exists
+        run: test -f .next/standalone/server.js || { echo "::error::.next/standalone/server.js missing"; exit 1; }
+
+      - name: Upload standalone build
+        uses: actions/upload-artifact@v4
+        with:
+          name: standalone
+          path: .next/standalone
+          include-hidden-files: true # .next is a dot-directory; skipped by default otherwise
+          retention-days: 7
+
+  # ------------------------------------------- RUN THE BUILT SITE & TEST IT
+  verify:
+    name: Smoke, headers & Lighthouse
+    needs: [build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: file:${{ github.workspace }}/ci-runtime.db
+      PORT: "3000"
+      HOSTNAME: 127.0.0.1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: standalone
+          path: .next/standalone
+
+      # Prisma CLI is needed to create the SQLite schema the site expects.
+      - run: bun install --frozen-lockfile
+      - run: bunx prisma db push --skip-generate
+
+      - name: Start the production server
+        run: |
+          nohup bun .next/standalone/server.js > server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null http://127.0.0.1:3000/; then echo "Server up after ${i}s"; exit 0; fi
+            sleep 1
+          done
+          echo "::error::Server did not become ready"; cat server.log; exit 1
+
+      - name: Smoke test key routes
+        run: |
+          fail=0
+          for path in / /about /contact /privacy /terms /sitemap.xml; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:3000${path}")
+            echo "${path} -> ${code}"
+            [ "$code" = "200" ] || fail=1
+          done
+          exit $fail
+
+      - name: Assert security headers are served
+        run: |
+          headers=$(curl -sI http://127.0.0.1:3000/)
+          missing=0
+          for h in strict-transport-security content-security-policy x-content-type-options referrer-policy; do
+            echo "$headers" | grep -qi "^${h}:" && echo "ok   ${h}" || { echo "MISSING ${h}"; missing=1; }
+          done
+          exit $missing
+
+      - name: Lighthouse CI
+        run: bunx @lhci/cli@0.14.0 autorun --config=./lighthouserc.json
+
+      - name: Dump server log on failure
+        if: failure()
+        run: cat server.log || true
+
+  # --------------------------------------------------- CONTAINER IMAGE (main)
+  image:
+    name: Build & push image
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [verify, security, shellcheck]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # metadata-action lowercases the repo name, which GHCR requires.
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha,format=long
+            type=raw,value=latest
+
+      - id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+  # ----------------------------------------------------- DEPLOY (opt-in, SSH)
+  # Off until you set repo variable DEPLOY_ENABLED=true and add the secrets below.
+  deploy:
+    name: Deploy to production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    needs: [image]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: production # add required reviewers here for a manual approval gate
+      url: ${{ vars.PRODUCTION_URL }}
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+    steps:
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host target\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_deploy\n  StrictHostKeyChecking yes\n' \
+            "$DEPLOY_HOST" "$DEPLOY_USER" > ~/.ssh/config
+
+      - name: Record currently running image (for rollback)
+        id: prev
+        run: |
+          prev=$(ssh target "docker inspect -f '{{.Config.Image}}' rohi 2>/dev/null || true")
+          echo "image=${prev}" >> "$GITHUB_OUTPUT"
+          echo "Previous image: ${prev:-none}"
+
+      - name: Roll out new image
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}:sha-${GITHUB_SHA}"
+          ssh target bash -s -- "$image" <<'REMOTE'
+          set -euo pipefail
+          image="$1"
+          docker pull "$image"
+          docker rm -f rohi 2>/dev/null || true
+          docker run -d --name rohi --restart unless-stopped \
+            --env-file /opt/rohi/.env \
+            -v rohi-data:/data \
+            -p 127.0.0.1:3000:3000 \
+            "$image"
+          REMOTE
+
+      - name: Smoke test production
+        run: |
+          url="${{ vars.PRODUCTION_URL }}"
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$url")
+            echo "Attempt ${i}: HTTP ${code}"
+            [ "$code" = "200" ] && exit 0
+            sleep 10
+          done
+          echo "::error::Production smoke test failed"; exit 1
+
+      - name: Roll back on failure
+        if: failure() && steps.prev.outputs.image != ''
+        env:
+          PREV_IMAGE: ${{ steps.prev.outputs.image }}
+        run: |
+          ssh target bash -s -- "$PREV_IMAGE" <<'REMOTE'
+          set -euo pipefail
+          docker rm -f rohi 2>/dev/null || true
+          docker run -d --name rohi --restart unless-stopped \
+            --env-file /opt/rohi/.env -v rohi-data:/data -p 127.0.0.1:3000:3000 "$1"
+          REMOTE
+          echo "::warning::Rolled back to ${PREV_IMAGE}"
