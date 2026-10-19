@@ -352,12 +352,12 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="fixed bottom-24 right-3 z-[60] flex h-[min(620px,70vh)] w-[min(440px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-navy/10 bg-background shadow-2xl sm:right-5"
+            className="fixed bottom-24 right-3 z-[60] flex h-[min(620px,70vh)] w-[min(440px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:right-5"
             role="dialog"
             aria-label="ROHI AI assistant"
           >
             {/* Header */}
-            <div className="flex items-center justify-between gap-3 border-b border-navy/10 bg-navy px-4 py-3 text-white">
+            <div className="flex items-center justify-between gap-3 border-b border-gray-200 bg-[#0B1220] px-4 py-3 text-white">
               <div className="flex items-center gap-2.5">
                 <RohiLogo tone="light" height={22} />
               </div>
@@ -380,7 +380,7 @@ export function ChatWidget() {
                 </button>
               </div>
             </div>
-            <div className="flex items-center gap-2 border-b border-navy/5 bg-cloud px-4 py-1.5">
+            <div className="flex items-center gap-2 border-b border-gray-100 bg-[#f5f7fa] px-4 py-1.5">
               <span className="size-1.5 animate-pulse rounded-full bg-teal" />
               <span className="font-mono-tech text-[10px] uppercase tracking-widest text-ink-soft">
                 AI assistant · understands ROHI
@@ -434,7 +434,7 @@ export function ChatWidget() {
             </div>
 
             {/* Handoff — passes conversation context to the contact form */}
-            <div className="flex items-center justify-between gap-2 border-t border-navy/5 bg-background px-3.5 py-1.5">
+            <div className="flex items-center justify-between gap-2 border-t border-gray-100 bg-[#f5f7fa] px-3.5 py-1.5">
               <button
                 type="button"
                 onClick={handoff}
@@ -461,7 +461,7 @@ export function ChatWidget() {
             {/* Input */}
             <form
               onSubmit={onSubmit}
-              className="flex items-end gap-2 border-t border-navy/10 bg-background px-3 py-3"
+              className="flex items-end gap-2 border-t border-gray-200 bg-white px-3 py-3"
             >
               <textarea
                 ref={inputRef}
@@ -475,7 +475,7 @@ export function ChatWidget() {
                 }}
                 rows={1}
                 placeholder="Ask about a business problem, a capability, or what ROHI could build…"
-                className="max-h-28 min-h-[40px] flex-1 resize-none rounded-lg border border-navy/15 bg-cloud px-3 py-2 text-sm text-ink placeholder:text-ink-soft/50 outline-none transition-colors focus:border-teal/60 focus:ring-[3px] focus:ring-teal/20"
+                className="max-h-28 min-h-[40px] flex-1 resize-none rounded-lg border border-gray-200 bg-[#f5f7fa] px-3 py-2 text-sm text-[#111827] placeholder:text-ink-soft/50 outline-none transition-colors focus:border-teal/60 focus:ring-[3px] focus:ring-teal/20"
                 disabled={busy}
               />
               <button
@@ -506,7 +506,7 @@ function MessageBubble({ msg }: { msg: Msg }) {
         className={cn(
           "max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
           isUser
-            ? "rounded-br-md bg-[#0B1220] text-white"
+            ? "rounded-br-md bg-[#20C7C9] text-[#0B1220] font-medium"
             : "rounded-bl-md border border-gray-200 bg-white text-[#111827] shadow-sm",
         )}
       >
@@ -517,16 +517,16 @@ function MessageBubble({ msg }: { msg: Msg }) {
             <ReactMarkdown
               components={{
                 p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
-                strong: ({ children }) => <strong className="font-semibold text-[#0B1220]">{children}</strong>,
+                strong: ({ children }) => <strong className="font-bold text-[#0B1220]">{children}</strong>,
                 ul: ({ children }) => <ul className="ml-4 list-disc space-y-1">{children}</ul>,
                 ol: ({ children }) => <ol className="ml-4 list-decimal space-y-1">{children}</ol>,
                 li: ({ children }) => <li className="leading-relaxed">{children}</li>,
                 h2: ({ children }) => <h2 className="text-sm font-bold mt-2 mb-1">{children}</h2>,
                 a: ({ href, children }) => {
                   if (href && href.startsWith("/")) {
-                    return <Link href={href} className="text-[#20C7C9] font-medium underline underline-offset-2">{children}</Link>;
+                    return <a href={href} className="inline-flex items-center gap-0.5 rounded bg-[#20C7C9]/10 px-1.5 py-0.5 text-[#20C7C9] font-semibold hover:bg-[#20C7C9]/20 no-underline">{children}</a>;
                   }
-                  return <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#20C7C9] font-medium underline underline-offset-2">{children}</a>;
+                  return <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#20C7C9] font-semibold underline underline-offset-2">{children}</a>;
                 },
                 code: ({ children }) => <code className="rounded bg-gray-100 px-1 py-0.5 text-xs">{children}</code>,
                 blockquote: ({ children }) => <blockquote className="border-l-2 border-[#20C7C9] pl-3 italic text-gray-600">{children}</blockquote>,
