@@ -48,11 +48,12 @@ export async function POST(req: Request) {
   }
 
   // Prepend the ROHI agent system prompt + the confirmed knowledge base.
+  // Combine system prompt + knowledge base into ONE system message
+  // (some models ignore multiple system messages)
   const messages = [
-    { role: "system" as const, content: ROHI_AGENT_SYSTEM_PROMPT },
     {
       role: "system" as const,
-      content: `# ROHI SYSTEMS KNOWLEDGE BASE — confirmed facts (source of truth)\nUse this as the primary source for ROHI-specific information. Do not invent beyond what is documented here. If a fact is not in this knowledge base, say you do not have enough confirmed information.\n\n${ROHI_KNOWLEDGE_BASE}`,
+      content: `${ROHI_AGENT_SYSTEM_PROMPT}\n\n# ROHI SYSTEMS KNOWLEDGE BASE — confirmed facts (source of truth)\nUse this as the primary source for ROHI-specific information. Do not invent beyond what is documented here. If a fact is not in this knowledge base, say you do not have enough confirmed information.\n\n${ROHI_KNOWLEDGE_BASE}`,
     },
     ...parsed.data.messages,
   ];
