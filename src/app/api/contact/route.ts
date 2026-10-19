@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { checkRateLimit, LIMITS } from "@/lib/rate-limit";
+import { isBot } from "@/lib/honeypot";
 import { z } from "zod";
 import { notifyTeamOfEnquiry, sendAutoReply } from "@/lib/email";
 
@@ -18,6 +20,7 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const _rl = checkRateLimit(req, LIMITS.contact, "contact"); if (_rl) return _rl;
   let body: unknown;
   try {
     body = await req.json();
@@ -28,6 +31,7 @@ export async function POST(req: Request) {
     );
   }
 
+  if (isBot(body as Record<string, unknown>)) return NextResponse.json({ ok: true, message: "Enquiry received" }, { status: 201 });
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(

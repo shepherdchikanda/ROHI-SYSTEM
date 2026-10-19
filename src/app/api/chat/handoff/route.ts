@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { checkRateLimit, LIMITS } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const messageSchema = z.object({
@@ -25,6 +26,7 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const _rl = checkRateLimit(req, LIMITS.handoff, "handoff"); if (_rl) return _rl;
   let body: unknown;
   try {
     body = await req.json();

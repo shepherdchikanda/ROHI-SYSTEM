@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { checkRateLimit, LIMITS } from "@/lib/rate-limit";
+import { isBot } from "@/lib/honeypot";
 import { z } from "zod";
 
 const schema = z.object({
@@ -8,6 +10,7 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const _rl = checkRateLimit(req, LIMITS.subscribe, "subscribe"); if (_rl) return _rl;
   let body: unknown;
   try {
     body = await req.json();
@@ -24,6 +27,7 @@ export async function POST(req: Request) {
       { status: 422 },
     );
   }
+  if (isBot(body as Record<string, unknown>)) return NextResponse.json({ ok: true }, { status: 201 });
   const email = parsed.data.email.toLowerCase().trim();
   try {
     // upsert — ignore duplicate-email errors gracefully

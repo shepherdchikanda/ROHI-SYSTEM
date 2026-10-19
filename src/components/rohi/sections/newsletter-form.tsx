@@ -11,6 +11,7 @@ import { track } from "@/lib/analytics";
  */
 export function NewsletterForm() {
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
     "idle",
   );
@@ -25,7 +26,7 @@ export function NewsletterForm() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: v, source: "insights" }),
+        body: JSON.stringify({ email: v, source: "insights", website: honeypot }),
       });
       if (res.ok) {
         setStatus("done");

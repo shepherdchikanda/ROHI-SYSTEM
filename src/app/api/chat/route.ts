@@ -1,6 +1,7 @@
 import { ROHI_AGENT_SYSTEM_PROMPT } from "@/lib/rohi-agent-prompt";
 import { ROHI_KNOWLEDGE_BASE } from "@/lib/rohi-knowledge-base";
 import { z } from "zod";
+import { checkRateLimit, LIMITS } from "@/lib/rate-limit";
 
 const messageSchema = z.object({
   role: z.enum(["system", "user", "assistant"]),
@@ -18,6 +19,7 @@ const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_MODEL = "nvidia/nemotron-3.5-super-vl:free";
 
 export async function POST(req: Request) {
+  const _rl = checkRateLimit(req, LIMITS.chat, "chat"); if (_rl) return _rl;
   let body: unknown;
   try {
     body = await req.json();

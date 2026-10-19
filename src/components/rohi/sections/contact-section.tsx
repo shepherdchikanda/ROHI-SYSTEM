@@ -119,6 +119,7 @@ export function ContactSection() {
   >("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [chatContext, setChatContext] = useState<string>("");
+  const [honeypot, setHoneypot] = useState("");
 
   // Read chatbot handoff context (if visitor came from "Start a Conversation").
   // Hydration-safe: render EMPTY first, then sync sessionStorage into state.
@@ -159,7 +160,7 @@ export function ContactSection() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, website: honeypot }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
@@ -348,6 +349,7 @@ export function ContactSection() {
                         )}
                       </RohiButtonElement>
                     </div>
+                    <input type="text" name="website" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }} aria-hidden="true" />
                   </motion.form>
                 )}
               </AnimatePresence>
