@@ -84,6 +84,7 @@ export async function POST(req: Request) {
         model,
         messages,
         stream: true,
+        stream_options: { include_usage: true },
       }),
     });
   } catch (err) {
