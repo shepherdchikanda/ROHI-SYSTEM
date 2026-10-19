@@ -62,3 +62,10 @@ server.log
 agent-ctx/
 .z-ai-config
 !.env.example
+full-regression-test.ts
+run-full-test.ts
+stage3-test.ts
+stage3-part2.ts
+test-retrieval.ts
+verify-retrieval.ts
+verify-followup.ts
