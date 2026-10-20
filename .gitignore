@@ -74,3 +74,6 @@ baseline-*.mjs
 # venv / caches
 .caches/
 .cache/
+
+# platform skill docs (environment artifact, not project code)
+skills/
