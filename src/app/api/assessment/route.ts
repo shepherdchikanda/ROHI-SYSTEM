@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { checkRateLimit, LIMITS } from "@/lib/rate-limit";
+import { isBot } from "@/lib/honeypot";
 import { z } from "zod";
 
 const answerSchema = z.object({
@@ -22,6 +23,8 @@ export async function POST(req: Request) {
   try { body = await req.json(); } catch {
     return NextResponse.json({ ok: false, error: "Invalid request body" }, { status: 400 });
   }
+  // Honeypot bot check (same as contact + subscribe routes)
+  if (isBot(body as Record<string, unknown>)) return NextResponse.json({ ok: true }, { status: 201 });
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ ok: false, error: "Validation failed" }, { status: 422 });
   try {

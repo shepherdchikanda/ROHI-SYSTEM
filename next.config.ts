@@ -2,10 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // SECURITY: Do NOT swallow TypeScript errors at build time.
+  // Previously this was `true`, which silently masked type regressions.
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
   allowedDevOrigins: [
     "*.space-z.ai",
     "preview-*.space-z.ai",
@@ -13,6 +15,12 @@ const nextConfig: NextConfig = {
     "*.chat.z.ai",
   ],
   async headers() {
+    // Content Security Policy.
+    // NOTE: 'unsafe-eval' is required for Next.js dev mode (HMR / React Refresh).
+    // For a production deployment, remove 'unsafe-eval' and consider using
+    // per-request nonces for inline scripts to also drop 'unsafe-inline'.
+    // 'unsafe-inline' (style-src) is required by Tailwind's runtime styles +
+    // Framer Motion inline styles.
     const csp = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
@@ -23,6 +31,8 @@ const nextConfig: NextConfig = {
       "frame-ancestors 'self' https://*.space-z.ai https://*.chat.z.ai https://chat.z.ai",
       "base-uri 'self'",
       "form-action 'self' https://wa.me",
+      "object-src 'none'",
+      "worker-src 'self'",
     ].join("; ");
 
     return [

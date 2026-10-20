@@ -39,6 +39,8 @@
   "exclude": [
     "examples",
     "scripts",
+    "skills",
+    "mini-services",
     "node_modules"
   ]
 }
