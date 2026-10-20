@@ -20,7 +20,7 @@ const FROM = process.env.RESEND_FROM || "ROHI SYSTEMS <onboarding@resend.dev>";
 async function getResend() {
   if (!process.env.RESEND_API_KEY) return null;
   try {
-    const { default: Resend } = await import("resend");
+    const { Resend } = await import("resend");
     return new Resend(process.env.RESEND_API_KEY);
   } catch {
     return null; // resend not installed — silently skip
