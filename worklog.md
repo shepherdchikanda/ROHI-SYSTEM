@@ -343,3 +343,24 @@ Stage Summary:
 - The "Protect Main" ruleset (id=25443350) still enforces "changes must be through a pull request". To enable direct-push workflow on main, the repo owner must disable the pull_request rule at: https://github.com/shepherdchikanda/ROHI-SYSTEM/rules/25443350 (Edit → remove the "Require a pull request before merging" rule → Save). The deletion + non_fast_forward rules should STAY for safety (prevents accidental branch deletion and force-pushes).
 - The 1 local commit (gitignore: ignore skills/) will push automatically on the user's next direct push to main, once the rule is disabled.
 - Workflow going forward (per user): single-branch main. User will return to the develop → verify → main workflow later when ready.
+
+---
+Task ID: 38
+Agent: Main orchestrator
+Task: After user disabled the pull_request rule on "Protect Main" ruleset — verify rule removed, push local commits to main, confirm direct-push workflow works
+
+Work Log:
+- Verified via GitHub API: rules on main are now only ['deletion', 'non_fast_forward']. The pull_request and required_status_checks rules are GONE. Direct-push now allowed.
+- Pushed local commit 1adfcc0 (gitignore: ignore skills/) to origin/main → SUCCESS (327c649..f9e18e9). First direct push to main without a PR.
+- An auto-restore-point commit f9e18e9 (UUID message) was also on top — inspected contents: only worklog.md updates (30 insertions). Harmless (worklog.md is meant to be tracked). skills/ NOT included (gitignore working).
+- Tested direct-push workflow: made a trivial commit (c85c085, blank line in .gitignore) and pushed → SUCCESS (f9e18e9..c85c085 main -> main). Direct-push-to-main workflow is fully operational.
+- Verified: local main @ c85c085, origin/main @ c85c085 — IN SYNC.
+- Verified: skills/ is NOT tracked (gitignore working).
+- Verified: dev server Chat API HTTP 200 in 1.8s — chatbot fix still live on main.
+
+Stage Summary:
+- Direct-push-to-main workflow is now LIVE. User can `git push origin main` directly — no PRs needed.
+- Branch state: only `main` exists locally and remotely (develop branches fully deleted). The 5 dependabot/* branches remain (active dependency-update PRs — untouched).
+- Safety rules retained on main: deletion (can't delete main) + non_fast_forward (can't force-push). These protect against accidents without blocking normal direct pushes.
+- The chatbot fix (PR #26) is live on production main. The .gitignore now excludes skills/ (platform artifacts won't pollute the repo).
+- Workflow going forward (per user): single-branch main, direct push. User will return to develop → verify → main workflow later when ready.
