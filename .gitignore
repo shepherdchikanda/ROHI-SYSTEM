@@ -1,7 +1,5 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-node_modules
+/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -30,46 +28,30 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files (keep .env.example tracked)
+.env
+.env*.local
+.env.local
+.env.*.local
 
 # vercel
 .vercel
 
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-local-*
-.claude
-.z-ai-config
-*.log
-dev.log
-dev.out.log
-test
-prompt
 
-server.log
-# Skills directory
-/skills/
-# ROHI — secrets + local data (never push)
-.env
-.env.*
-db/*.db
-db/*.db-journal
-dev.log
-server.log
-agent-ctx/
-.z-ai-config
-!.env.example
-full-regression-test.ts
-run-full-test.ts
-stage3-test.ts
-stage3-part2.ts
-test-retrieval.ts
-verify-retrieval.ts
-verify-followup.ts
-upload/
+# database
+/db/*.db
+/db/*.db-journal
+/prisma/migrations/dev
+
+# logs
+/dev.log
+*.log
+
+# agent context (private)
+/agent-ctx/
 
 # Test + dev scripts (never push — may contain API keys)
 final-regression-test.ts
@@ -77,9 +59,18 @@ final-regression-test.ts
 tests/
 tool-results/
 .zscripts/
+scripts/
 stage3-*.ts
 run-full-test.ts
 test-*.ts
 verify-*.ts
+verify-retrieval.ts
+verify-followup.ts
+upload/
+
 baseline-*.mjs
 *.mjs
+
+# venv / caches
+.caches/
+.cache/
