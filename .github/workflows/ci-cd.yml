@@ -234,7 +234,7 @@ jobs:
 
       # metadata-action lowercases the repo name, which GHCR requires.
       - id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
