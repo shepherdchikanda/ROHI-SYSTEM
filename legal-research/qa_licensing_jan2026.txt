@@ -1,0 +1,207 @@
+                              Autoridade Reguladora de TIC
+
+
+        Perguntas Frequentes sobre Registo e Licenciamento de Provedores
+Intermediários de Serviços Electrónicos e de Operadores de Plataformas Digitais
+
+
+A Assembleia da República aprovou a Lei n° 3/2017 de 9 de Janeiro, Lei de Transacções
+Electrónicas, que estabelece os princípios e garantia do Regime Jurídico das Transacções
+Electrónicas, Comércio Electrónico e Governo Electrónico. Com vista a operacionalização da
+Lei de Transacções Electrónicas, o Conselho de Ministros aprovou o Decreto n.º 59/2023 de
+27 de Outubro, Regulamento de Registo e Licenciamento dos Provedores Intermediários de
+Serviços Electrónicos e de Operadores de Plataformas Digitais.
+
+
+O Regulamento de Registo e Licenciamento de Provedores Intermediários de Serviços
+Electrónicos e Operadores de Plataformas Digitais visa, dentre vários aspectos, estabelecer os
+limites no uso destas ferramentas, tomando em consideração a necessidade de assegurar a
+protecção do cidadão e da soberania no geral e de prestação de serviços digitais seguros e de
+confiança em Moçambique.
+
+
+Havendo necessidade de melhorar a aplicação e eficácia no processo de implementação do
+Decreto n.º 59/2023 de 27 de Outubro, de modo a criar um ambiente mais favorável aos
+Provedores Intermediários de Serviços Electrónicos e Operadores de Plataformas Digitais que
+operam na República de Moçambique, o Conselho de Ministros aprovou o Decreto nº 44/2025
+de 28 de Novembro, que altera o Regulamento de Registo e Licenciamento de Provedores
+Intermediários de Serviços Electrónicos e de Operadores de Plataformas Digitais.
+
+
+1.   O que são Provedores Primários de Serviços?
+Nos termos da Lei de Transacções Electrónicas, são Provedores Primários de Serviços, as
+instituições públicas governamentais ou delegadas pela Entidade Reguladora das Tecnologias
+de Informação e Comunicação que enviam, recebem ou armazenam dados institucionais,
+colectivos ou individuais.
+
+
+                                                                                            1
+                               Rua José Mateus No. 437 (258-21) 498786/7
+                              E-mail: info@intic.gov.mz; URL: www.intic.gov.mz
+                                           Maputo, Moçambique
+2. O que é Provedor Intermediário de Serviços Electrónicos?
+É a entidade que, em representação de outra pessoa, envia, recebe ou armazena mensagens de
+dados, presta serviços de acesso a rede ou serviços a partir dela.
+
+
+3. O que é Operador de Plataformas Digitais?
+Designa-se o provedor de aplicações da Internet que explora profissionalmente e com fins
+económicos as plataformas digitais.
+
+
+4. Qual é o objecto do Decreto n.º 59/2023 de 27 de Outubro?
+
+O Decreto n.º 59/2023 de 27 de Outubro estabelece os mecanismos e procedimentos para o
+Registo e Licenciamento de Provedores Intermediários de Serviços Electrónicos e de
+Operadores de Plataformas Digitais.
+
+
+5. Que entidades estão abrangidas pelo Regulamento?
+
+O Regulamento é aplicável aos Provedores Intermediários Serviços Electrónicos e aos
+Operadores de Plataformas Digitais, que oferecem serviços a destinatários estabelecidos ou que
+estejam localizados em Moçambique, independentemente do lugar de estabelecimento dos
+prestadores de serviços.
+
+
+6. Quais são as Categorias de Provedores Intermediários de Serviços Electrónicos?
+Constituem categorias de Provedores Intermediários de Serviços Electrónicos as seguintes:
+      Provedor Intermediário de Serviço de Mera Conduta;
+      Provedor Intermediário de Serviço de Caching;
+      Provedor Intermediário de Serviço de Hospedagem;
+      outros provedores Intermediários de Serviços Electrónicos a serem definidos por
+       deliberação da Autoridade Reguladora de TIC.
+
+
+7. Quais são as Categorias de Plataformas Digitais?
+Constituem categorias de Plataformas Digitais as seguintes:
+      Plataforma de Mercado Digital;
+      Plataforma de Pesquisa Digital;
+      Plataforma de Repositório Digital;
+      Plataforma de Comunicação Digital;
+      Plataforma de Comunidade Digital;
+
+
+                                                                                            2
+                                Rua José Mateus No. 437 (258-21) 498786/7
+                               E-mail: info@intic.gov.mz; URL: www.intic.gov.mz
+                                            Maputo, Moçambique
+      Plataforma de Pagamento Digital.
+
+
+
+
+   Fig. 1 Exemplos de Plataformas Digitais
+   Fonte: Model 2: Digital Platform Map - Center for Strategy & Leadership (c4sl.eu)
+
+
+
+8. Quem deve efectuar o Registo?
+    Os Provedores Intermediários de Serviços Electrónicos devem efectuar o registo dos
+       serviços.
+      Os Operadores de Plataformas Digitais devem efectuar o registo das plataformas e
+       aplicações digitais.
+      O Registo constitui um pré-requisito para obtenção da licença.
+
+
+9. Quais são os Requisitos para o Registo?
+O pedido de registo para prestação de serviços de Provedor Intermediário de Serviços
+Electrónicos e de Operador de Plataformas Digitais é dirigido a Autoridade Reguladora de TIC,
+acompanhado pelos seguintes documentos:
+   a) Formulário emitido pela entidade devidamente preenchido;
+   b) Cópia do documento de Identificação do representante da entidade legal;
+   c) Número Único da Identificação Tributária da empresa;
+   d) Certidão Definitiva da Entidade Legal;
+   e) Comprovativo do Registo do Domínio;
+   f) Procuração, caso seja aplicável;
+   g) Endereços de Internet Públicos (IP Públicos) ou Número de Sistema Autónomo (ASN
+       – Autonomous System Number).
+   h) Apresentar a documentação técnica do sistema contendo a seguinte informação:
+           os serviços prestados;
+
+                                                                                           3
+                                      Rua José Mateus No. 437 (258-21) 498786/7
+                                     E-mail: info@intic.gov.mz; URL: www.intic.gov.mz
+                                                  Maputo, Moçambique
+          os aspectos técnicos detalhados da arquitectura e dos sistemas de informação;
+          a descrição e os diagramas da infra-estrutura tecnológica incluindo a localização
+           das bases de dados dos utilizadores nacionais no espaço da jurisdição de
+           Moçambique ou no estrangeiro;
+          os aspectos de segurança dos sistemas de informação;
+          os aspectos de protecção de dados.
+
+
+10. Onde e como efectuar o Pedido de Registo?
+O pedido de registo da actividade de Provedor Intermediário de Serviços Electrónicos e de
+Operador de Plataformas Digitais é solicitado à Autoridade Reguladora de TIC na respectiva
+página de Internet ou no Balcão de Atendimento.
+
+
+11. Quem deve solicitar o Licenciamento?
+Todos Provedores Intermediários de Serviços Electrónicos e Operadores de Plataformas
+Digitais após a validação do Registo.
+
+
+12. Quais são os Requisitos para Licenciamento?
+O pedido de licenciamento deve ser acompanhado pelos seguintes documentos:
+      requerimento que sustenta o pedido;
+      Número Único da Identificação Tributária da empresa;
+      procuração, caso seja aplicável.
+
+
+13. Qual é a validade da licença?
+A licença tem a validade de 5 anos, podendo ser renovada por iguais e sucessivos períodos.
+
+
+14. Quem deve pagar a taxa de licenciamento?
+Todos os Provedores Intermediários de Serviços e Operadores de Plataformas Digitais.
+
+
+15. Quem deve pagar a Taxa anual?
+   a) A taxa anual é devida pelos Provedores Intermediários de Serviços Electrónicos e
+       pelos Operadores de Plataformas Digitais licenciados e corresponde a 1% para as
+       entidades nacionais e internacionais, da receita operacional bruta;
+   b) A Taxa anual não se aplica as Startups com um capital social de até 50,000.00 MT,
+       com facturação anual que não ultrapassa o valor de 2,500,000.00 MT.
+
+
+
+                                                                                             4
+                               Rua José Mateus No. 437 (258-21) 498786/7
+                              E-mail: info@intic.gov.mz; URL: www.intic.gov.mz
+                                           Maputo, Moçambique
+16. Até quando deve ser paga a taxa anual?
+A taxa anual dos Provedores Intermediários de Serviços Electrónicos e dos Operadores de
+Plataformas Digitais deve ser paga até o dia 31 de Março de cada ano.
+
+
+17. Quais são as penalizações pelo incumprimento do previsto no Decreto n.º 59/2023 de
+   27 de Outubro?
+A violação às disposições do Decreto n.º 59/2023 de 27 de Outubro está sujeita a aplicação
+de sanções de acordo com a natureza e gravidade da infracção, podendo ser:
+   a) advertência registada;
+   b) multa;
+   c) suspensão do exercício da actividade; e
+   d) cancelamento do registo ou licença de Provedores Intermediários de Serviços
+       Electrónicos e Operadores de Plataformas Digitais.
+
+
+18. Onde posso obter mais informações?
+Em caso de dúvidas ou esclarecimentos adicionais, pode contactar o INTIC, IP através dos
+seguintes contactos: (i) endereço de correio electrónico: registo.licenciamento@intic.gov.mz;
+(ii) informação adicional disponível na página web do INTIC, IP: www.intic.gov.mz; endereço
+físico do INTIC, IP: Rua José Mateus, nº 437, cidade de Maputo, Moçambique.
+
+
+
+
+                                     Maputo, Janeiro de 2026
+
+
+
+
+                                                                                             5
+                                Rua José Mateus No. 437 (258-21) 498786/7
+                               E-mail: info@intic.gov.mz; URL: www.intic.gov.mz
+                                            Maputo, Moçambique
+
