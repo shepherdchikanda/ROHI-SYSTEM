@@ -286,3 +286,30 @@ Work Log:
 Stage Summary:
 - Lint passes (exit 0), home 200, header renders all 10 links + logo + toggle + CTA cleanly (VLM: "no visible overlap or cramping")
 - Git: local repo only, no remote configured. Labeled commit created for restore point
+
+---
+Task ID: 35
+Agent: Main orchestrator
+Task: Fix ROHI AI Assistant chatbot failing with "I'm having trouble responding right now. Please try again, or reach the ROHI team through the contact page." when visitors asked about email automation + invoicing + pricing + timeline (per 2 user-supplied screenshots)
+
+Work Log:
+- Analyzed the 2 user-supplied screenshots with VLM: confirmed the chat widget showed a generic error fallback ("I'm having trouble responding right now...") immediately after the visitor asked "email automation and invoicing i preer to create my own systm and I would like to know how much you guys charge and how long will it take thanjs"
+- Root cause #1 (backend): /api/chat/route.ts was wired to OpenRouter (https://openrouter.ai/api/v1/chat/completions) and required process.env.OPENROUTER_API_KEY. The .env file only contained DATABASE_URL — no OPENROUTER_API_KEY, no OPENROUTER_MODEL. So every chat request hit the `if (!apiKey)` 503 branch, OR (if a stale key existed) would fail at the upstream call. Either way the frontend received a non-OK response.
+- Root cause #2 (frontend bug): chat-widget.tsx ignored the server's response body on non-OK and ALWAYS showed a generic "I'm having trouble responding right now" fallback — masking the real, helpful server message ("The AI assistant isn't configured yet. Set OPENROUTER_API_KEY..."). This is why the user saw a useless message instead of an actionable one.
+- Fix #1 — rewrote /api/chat/route.ts to use the platform-managed z-ai-web-dev-sdk (no API key needed; pre-authenticated by runtime):
+  * `import ZAI from "z-ai-web-dev-sdk"`; cached `ZAI.create()` instance in a module-level promise (per SDK best-practice: "Create ZAI instance once and reuse across requests")
+  * Calls `zai.chat.completions.create({ messages, stream: true, thinking: { type: "disabled" } })` — verified the SDK returns a `ReadableStream<Uint8Array>` of standard OpenAI SSE chunks (`data: {"choices":[{"delta":{"content":"..."}}]}`)
+  * Preserved the existing SSE→plain-text delta parsing logic (buffer + split by newline + JSON.parse + forward `delta.content`)
+  * Preserved ALL other logic unchanged: rate limiting (checkRateLimit), Zod validation (max 8000 chars/msg, max 30 msgs), ROHI_AGENT_SYSTEM_PROMPT + retrieveRelevantKB RAG retrieval (latest user message drives KB section selection)
+  * Defensive fallback: if SDK ever returns a non-ReadableStream object, treat it as a one-shot completion and return `.choices[0].message.content` directly
+  * Removed all OPENROUTER_URL / OPENROUTER_API_KEY / OPENROUTER_MODEL / HTTP-Referer / X-Title code — no longer relevant
+- Fix #2 — fixed chat-widget.tsx non-OK handling: now reads `res.text()` first; if the server returned a short (<400 char) useful message, surfaces THAT to the user instead of the generic fallback. 429 still gets the dedicated rate-limit message. This means future config/runtime errors show an actionable message instead of a useless generic one.
+- Updated .env.example: removed the OPENROUTER_API_KEY / OPENROUTER_MODEL entries; replaced with a comment noting the chat assistant now uses the platform-managed z-ai-web-dev-sdk (no key needed)
+- Verified via direct curl: `POST /api/chat` with the exact failing message returns a proper streamed response: "I can help you explore building a custom email automation and invoicing system. ROHI doesn't publish fixed pricing or timelines, as they depend on your specific requirements—like the complexity of workflows, integrations needed, number of users, and whether you want AI features like automatic invoice processing or forecasting. If you'd like, I can help clarify your needs and then connect you with the ROHI team for a detailed proposal. What's your current invoicing process like, and what would you want this system to do that your current setup doesn't?"
+- Verified via Agent Browser (end-to-end): opened / → accepted cookie banner → clicked "Ask ROHI" → typed the exact screenshot message → assistant responded correctly (NO error fallback). VLM screenshot analysis confirmed: "No, there is no error message like 'I'm having trouble responding.' The assistant provides a helpful response... it explains why it can't give a flat rate (because costs depend on complexity and features) and proactively asks follow-up questions"
+- Verified: bun run lint exit 0 (only 1 pre-existing harmless font warning in layout.tsx); dev.log shows `POST /api/chat 200 in 1827ms` with zero runtime errors; no console/page errors in browser
+
+Stage Summary:
+- Artifacts: src/app/api/chat/route.ts (rewritten — z-ai-web-dev-sdk backend), src/components/rohi/chat/chat-widget.tsx (frontend error-surfacing fix), .env.example (OpenRouter requirement removed)
+- The ROHI AI Assistant now actually works for visitors — no more error fallback. The response respects all ROHI prompt guardrails: no invented pricing/timeline (PRICING rule), explains factors that drive cost (scope, complexity, integrations, users, workflows, AI), offers human handoff for a proposal (HUMAN HANDOFF), and asks business-first clarifying questions (BUSINESS-FIRST RULE)
+- The fix is durable: the z-ai-web-dev-sdk is platform-managed, so the chat will keep working without any API key setup or credits monitoring. OpenRouter is no longer a dependency.

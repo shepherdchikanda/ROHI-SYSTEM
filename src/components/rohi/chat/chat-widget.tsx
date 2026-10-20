@@ -232,10 +232,17 @@ export function ChatWidget() {
         });
 
         if (!res.ok || !res.body) {
+          // Surface the server's actual message when it's a short, useful text.
+          // Falls back to a generic message if the body is empty/long/unreadable.
+          let serverText = "";
+          try { serverText = (await res.text()).trim(); } catch { /* ignore */ }
+          const isUseful = serverText.length > 0 && serverText.length < 400;
           const fallback =
             res.status === 429
               ? "I'm getting a lot of requests right now. Please try again in a moment, or use the contact form to reach the ROHI team."
-              : "I'm having trouble responding right now. Please try again, or reach the ROHI team through the contact page.";
+              : isUseful
+                ? serverText
+                : "I'm having trouble responding right now. Please try again, or reach the ROHI team through the contact page.";
           setMessages((prev) => {
             const next = [...prev];
             next[next.length - 1] = {
