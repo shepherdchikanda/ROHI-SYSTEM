@@ -3,6 +3,7 @@ import { ROHI_KNOWLEDGE_BASE } from "@/lib/rohi-knowledge-base";
 import { retrieveRelevantKB } from "@/lib/kb-retrieval";
 import { z } from "zod";
 import { checkRateLimit, LIMITS } from "@/lib/rate-limit";
+import ZAI from "z-ai-web-dev-sdk";
 
 const messageSchema = z.object({
   role: z.enum(["system", "user", "assistant"]),
@@ -16,8 +17,13 @@ const bodySchema = z.object({
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_MODEL = "nvidia/nemotron-3.5-super-vl:free";
+// Reuse a single ZAI SDK instance across requests (per best-practice docs).
+// The SDK is pre-authenticated by the platform — no API key needed.
+let zaiPromise: Promise<unknown> | null = null;
+function getZAI() {
+  if (!zaiPromise) zaiPromise = ZAI.create();
+  return zaiPromise;
+}
 
 export async function POST(req: Request) {
   const _rl = checkRateLimit(req, LIMITS.chat, "chat"); if (_rl) return _rl;
@@ -39,26 +45,16 @@ export async function POST(req: Request) {
     );
   }
 
-  // Check API key
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    return new Response(
-      "The AI assistant isn't configured yet. Set OPENROUTER_API_KEY in the .env file. See the README for setup instructions.",
-      { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } },
-    );
-  }
-
-  // Prepend the ROHI agent system prompt + the confirmed knowledge base.
-  // RAG-lite: retrieve only the relevant KB sections for this question
-  // Uses the latest user message for retrieval (not assistant messages)
+  // RAG-lite: retrieve only the relevant KB sections for the latest user question.
+  // Uses the latest user message for retrieval (not assistant messages).
   const allMsgs = parsed.data.messages;
   const lastUserMsg = [...allMsgs].reverse().find((m) => m.role === "user");
   const relevantKB = lastUserMsg
     ? retrieveRelevantKB(lastUserMsg.content)
     : ROHI_KNOWLEDGE_BASE;
 
-  // Combine system prompt + retrieved KB sections into ONE system message
-  // (model treats KB as authoritative system-level reference material)
+  // Combine system prompt + retrieved KB sections into ONE system message.
+  // (Model treats KB as authoritative system-level reference material.)
   const messages = [
     {
       role: "system" as const,
@@ -67,60 +63,50 @@ export async function POST(req: Request) {
     ...parsed.data.messages,
   ];
 
-  const model = process.env.OPENROUTER_MODEL || DEFAULT_MODEL;
+  // Get the ZAI SDK instance (platform-managed, no API key required)
+  const zai = (await getZAI()) as {
+    chat: {
+      completions: {
+        create: (body: {
+          messages: { role: "system" | "user" | "assistant"; content: string }[];
+          stream: boolean;
+          thinking: { type: "enabled" | "disabled" };
+        }) => Promise<ReadableStream<Uint8Array> | { choices: { message: { content: string } }[] }>;
+      };
+    };
+  };
 
-  // Call OpenRouter (OpenAI-compatible streaming API)
-  let upstreamResponse: Response;
+  let upstreamStream: ReadableStream<Uint8Array>;
   try {
-    upstreamResponse = await fetch(OPENROUTER_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://rohi.systems",
-        "X-Title": "ROHI SYSTEMS - AI Assistant",
-      },
-      body: JSON.stringify({
-        model,
-        messages,
-        stream: true,
-        stream_options: { include_usage: true },
-      }),
+    const result = await zai.chat.completions.create({
+      messages,
+      stream: true,
+      thinking: { type: "disabled" },
     });
+
+    // The SDK normally returns a ReadableStream<Uint8Array> when stream:true.
+    // Be defensive: if it ever returns a non-stream object, treat it as a
+    // one-shot completion and return the content directly.
+    if (result instanceof ReadableStream) {
+      upstreamStream = result as ReadableStream<Uint8Array>;
+    } else {
+      const text =
+        (result as { choices?: { message?: { content?: string } }[] })
+          ?.choices?.[0]?.message?.content ?? "";
+      return new Response(text, {
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      });
+    }
   } catch (err) {
-    console.error("[chat] upstream fetch error", err);
+    console.error("[chat] completion create error", err);
     return new Response(
-      "I'm having trouble connecting right now. Please try again in a moment, or use the contact form to reach the ROHI team.",
+      "I'm having trouble responding right now. Please try again in a moment, or use the contact form to reach the ROHI team.",
       { status: 502, headers: { "Content-Type": "text/plain; charset=utf-8" } },
     );
   }
 
-  if (!upstreamResponse.ok || !upstreamResponse.body) {
-    // Read the error body for diagnostics
-    let errText = "";
-    try {
-      errText = await upstreamResponse.text();
-    } catch { /* ignore */ }
-    console.error("[chat] upstream error", upstreamResponse.status, errText);
-    // Return a user-friendly message (don't leak the raw API error)
-    const friendly =
-      upstreamResponse.status === 401
-        ? "The AI assistant's API key isn't valid. Please check the OPENROUTER_API_KEY in the .env file."
-        : upstreamResponse.status === 429
-          ? "The AI assistant is getting too many requests right now. Please try again in a moment."
-          : upstreamResponse.status === 402
-            ? "The AI assistant's account has no credits. Please add credits at openrouter.ai."
-            : "I'm having trouble responding right now. Please try again, or use the contact form to reach the ROHI team.";
-    return new Response(friendly, {
-      status: 502,
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
-    });
-  }
-
-  const upstreamStream = upstreamResponse.body;
-
   // Parse the upstream SSE stream and emit plain-text deltas to the client.
-  // OpenRouter uses the standard OpenAI SSE format:
+  // The SDK emits the standard OpenAI SSE format:
   //   data: {"choices":[{"delta":{"content":"..."}}]}
   //   data: [DONE]
   const decoder = new TextDecoder();
@@ -154,6 +140,7 @@ export async function POST(req: Request) {
               if (delta) controller.enqueue(encoder.encode(delta));
             } catch { /* partial JSON — ignore */ }
           }
+          if (done) break;
         }
         if (!done && buffer.startsWith("data:")) {
           const data = buffer.slice(5).trim();
