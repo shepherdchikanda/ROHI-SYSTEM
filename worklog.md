@@ -364,3 +364,29 @@ Stage Summary:
 - Safety rules retained on main: deletion (can't delete main) + non_fast_forward (can't force-push). These protect against accidents without blocking normal direct pushes.
 - The chatbot fix (PR #26) is live on production main. The .gitignore now excludes skills/ (platform artifacts won't pollute the repo).
 - Workflow going forward (per user): single-branch main, direct push. User will return to develop → verify → main workflow later when ready.
+
+---
+Task ID: 39
+Agent: Main orchestrator
+Task: Prevent visitors from seeing stale broken chat conversations in localStorage (UX concern: visitors who had the broken chat before the fix would see old error messages and not know to refresh)
+
+Work Log:
+- Root cause of the "nothing changed" report: the chat widget persists conversation to localStorage (48h expiry). Visitors who had the broken chat (with "I'm having trouble responding" errors) still saw those stale messages on return — no automatic recovery.
+- Implemented a two-layer fix in src/components/rohi/chat/chat-widget.tsx:
+  1. SCHEMA VERSION BUMP: STORAGE_KEY changed from "rohi-chat-messages" → "rohi-chat-messages-v2" (and TS key similarly). Old broken conversations stored under the v1 key are simply never read again — visitors get a fresh welcome automatically, no refresh needed. This is a guaranteed clean slate for ALL visitors right now.
+  2. ERROR-PATTERN FILTER: added BROKEN_RESPONSE_PATTERNS array (7 known error fallbacks) + containsBrokenResponse() helper. On load AND on resume, if a saved conversation contains any error fallback, it is silently discarded. Defense-in-depth for future error states (if the chatbot ever breaks again, those broken conversations won't be resumed).
+- One-time cleanup: removes orphaned v1 localStorage keys ("rohi-chat-messages" + "rohi-chat-saved-at") on first load after the version bump, freeing the ~5KB the old broken conversation was using.
+- Verified via Agent Browser end-to-end:
+  * Planted a broken v1 conversation (with "I'm having trouble responding" + "I don't have enough to say") into localStorage
+  * Reloaded the page (simulates a visitor returning)
+  * Result: broken conversation was DISCARDED automatically — fresh welcome ("Hi, I'm ROHI's AI assistant...") shown instead. Zero error messages visible.
+  * Sent a new message ("test email automation") → assistant responded correctly ("I can help you understand email automation as part of our broader automation capabilities...")
+  * dev.log: POST /api/chat 200 in 1696ms — no errors
+- Committed: fb21be6 "fix(chat): auto-discard broken saved conversations so visitors never see stale errors"
+- Pushed directly to main (c85c085..fb21c6) — direct-push workflow working.
+
+Stage Summary:
+- Visitors who had the broken chat will NEVER see those stale errors again — the conversation is automatically discarded on next page load. They get a fresh welcome and a working chatbot with zero action required on their part.
+- Future-proof: any future chatbot regression that saves error fallbacks will also be auto-discarded (the error-pattern filter catches it).
+- The version-bump pattern (v2 → v3) is documented in a code comment, so the next breaking change can reset everyone's history with a one-character edit.
+- This completes the chatbot fix: backend works (Task 35) + frontend surfaces real errors (Task 35) + visitors never see stale broken state (Task 39).
