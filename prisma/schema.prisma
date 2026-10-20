@@ -30,16 +30,19 @@ model Post {
 
 // ROHI SYSTEMS — business enquiries submitted via the Contact section.
 model Enquiry {
-  id              String   @id @default(cuid())
-  name            String
-  company         String?
-  email           String
-  phone           String?
-  improving       String?
-  currentProcess  String?
-  currentTech     String?
-  successLooksLike String?
-  createdAt       DateTime @default(now())
+  id                String   @id @default(cuid())
+  name              String
+  company           String?
+  email             String
+  phone             String?
+  whatNeeded        String?
+  improving         String?
+  currentProcess    String?
+  currentTech       String?
+  successLooksLike  String?
+  budgetRange       String?
+  preferredContact  String?
+  createdAt         DateTime @default(now())
 }
 
 // Newsletter subscribers (Insights page).
@@ -77,3 +80,5 @@ model Assessment {
   stage     String
   createdAt DateTime @default(now())
 }
+
+// Ensure these fields exist (added after regression rebuild)

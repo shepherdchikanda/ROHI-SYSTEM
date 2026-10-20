@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
-import { SectionHeader } from "./section-primitives";
+import { SectionHeader } from "../section-primitives";
 
 /**
  * Page hero — top of each inner page. Provides spacing below the fixed
