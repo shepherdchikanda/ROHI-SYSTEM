@@ -12,11 +12,38 @@ import { track } from "@/lib/analytics";
 
 type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
 
-const STORAGE_KEY = "rohi-chat-messages";
-const STORAGE_TS_KEY = "rohi-chat-saved-at";
+// STORAGE_KEY is versioned (v2). Bumping the version invalidates EVERY previously
+// saved conversation — visitors who had a broken chat (e.g. from before the
+// chatbot backend fix) automatically get a fresh welcome on their next visit,
+// with NO refresh needed and NO stale error messages shown.
+// If you ship a change that should reset everyone's chat history, bump v2 → v3.
+const STORAGE_KEY = "rohi-chat-messages-v2";
+const STORAGE_TS_KEY = "rohi-chat-saved-at-v2";
 const HISTORY_MAX_AGE = 48 * 60 * 60 * 1000; // 48 hours
 const SESSION_KEY = "rohi-chat-session";
 const HANDOFF_KEY = "rohi-chat-handoff";
+
+// Known assistant fallback patterns. If a saved conversation contains any of
+// these, it was saved during a broken/error state and should NOT be resumed —
+// discard it so the visitor starts fresh on next open. This is defense-in-
+// depth on top of the version bump above (catches future error states too).
+const BROKEN_RESPONSE_PATTERNS = [
+  "I'm having trouble responding right now",
+  "I'm having trouble connecting right now",
+  "I ran into an issue responding",
+  "I encountered an issue mid-response",
+  "The AI assistant isn't configured yet",
+  "The AI assistant's API key isn't valid",
+  "The AI assistant's account has no credits",
+];
+
+function containsBrokenResponse(msgs: Msg[]): boolean {
+  return msgs.some(
+    (m) =>
+      m.role === "assistant" &&
+      BROKEN_RESPONSE_PATTERNS.some((p) => m.content.includes(p)),
+  );
+}
 
 const QUICK_OPTIONS = [
   "Explore ROHI",
@@ -56,17 +83,31 @@ export function ChatWidget() {
         sessionStorage.setItem(SESSION_KEY, sid);
       }
       sessionIdRef.current = sid;
-      // Restore saved conversation (localStorage) — only if < 48h old
+
+      // One-time cleanup of orphaned v1 storage keys (from before the version
+      // bump). Frees up the ~5KB the old broken conversation was using.
+      localStorage.removeItem("rohi-chat-messages");
+      localStorage.removeItem("rohi-chat-saved-at");
+
+      // Restore saved conversation (localStorage) — only if < 48h old AND not
+      // in a broken state. A conversation with any error fallback in it is
+      // silently discarded so the visitor gets a fresh welcome instead.
       const saved = localStorage.getItem(STORAGE_KEY);
       const savedAt = Number(localStorage.getItem(STORAGE_TS_KEY) || 0);
       const isFresh = Date.now() - savedAt < HISTORY_MAX_AGE;
       if (saved && isFresh) {
         const parsed = JSON.parse(saved) as Msg[];
         if (Array.isArray(parsed) && parsed.length > 1) {
-          setHasHistory(true);
+          if (containsBrokenResponse(parsed)) {
+            // Saved conversation contains error fallbacks — discard it.
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_TS_KEY);
+          } else {
+            setHasHistory(true);
+          }
         }
       } else if (saved && !isFresh) {
-        localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(STORAGE_TS_KEY);
+        localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(STORAGE_TS_KEY);
       }
     } catch {
@@ -184,6 +225,14 @@ export function ChatWidget() {
       if (saved) {
         const parsed = JSON.parse(saved) as Msg[];
         if (Array.isArray(parsed) && parsed.length > 0) {
+          // Defensive: don't resume a conversation that contains error
+          // fallbacks — discard and start fresh instead.
+          if (containsBrokenResponse(parsed)) {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_TS_KEY);
+            setHasHistory(false);
+            return;
+          }
           setMessages(parsed);
         }
       }
