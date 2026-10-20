@@ -72,7 +72,7 @@ export function CookieConsent() {
           <div className="min-w-0">
             <p className="font-sans text-sm font-bold text-ink">Cookies & privacy</p>
             <p className="mt-1 text-xs leading-relaxed text-ink-soft">
-              We use only essential cookies to run the site. With your permission, we also collect anonymous analytics to improve it. No marketing cookies. No tracking pixels.{" "}
+              This site sets zero cookies. We use essential browser storage to run the site. With your permission, we also collect anonymous analytics to improve it. No marketing trackers. No tracking pixels.{" "}
               <Link href="/cookies" className="font-medium text-teal hover:underline">Read the policy</Link>.
             </p>
           </div>
@@ -90,7 +90,7 @@ export function CookieConsent() {
             >
               <div className="space-y-3 px-5 py-4">
                 <CookieToggle label="Necessary" desc="Required for the site to function. Always on." checked disabled />
-                <CookieToggle label="Analytics" desc="Anonymous, aggregated events (page views, clicks). No cookies, no PII." checked={analytics} onChange={setAnalytics} />
+                <CookieToggle label="Analytics" desc="Anonymous, aggregated events (page views, clicks). No browser cookies, no PII stored." checked={analytics} onChange={setAnalytics} />
                 <CookieToggle label="Marketing" desc="Not used. We don't run any marketing or advertising trackers." checked={false} disabled />
               </div>
             </motion.div>

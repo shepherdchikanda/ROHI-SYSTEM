@@ -109,12 +109,18 @@ export default function SecurityPage() {
               title="Data storage."
             >
               <p>
-                Enquiries, newsletter subscriptions and chat transcripts handed
-                off to our team are stored in a local SQLite database on our own
-                server — not in a public cloud SaaS, not in a shared
-                multi-tenant store. The only external data flow is to the LLM
-                API that powers the chatbot, to generate replies. We do not sell
-                or share the information you submit here.
+                Enquiries, newsletter subscriptions, assessment results and
+                chat transcripts handed off to our team are stored in a local
+                SQLite database on our own server — not in a public cloud SaaS,
+                not in a shared multi-tenant store. There are three external
+                data flows: the LLM API that powers the chatbot (to generate
+                replies), Google Fonts (the Manrope and JetBrains Mono
+                typefaces loaded from fonts.googleapis.com / fonts.gstatic.com
+                in your browser), and, conditionally, Resend (a third-party
+                email service used to notify our team of a new enquiry and to
+                send a visitor auto-reply). The Resend flow is currently
+                dormant — no emails are sent until the service is configured.
+                We do not sell or share the information you submit here.
               </p>
             </BodySection>
 
@@ -155,13 +161,15 @@ export default function SecurityPage() {
               title="Cookies & analytics."
             >
               <p>
-                Cookies on this site are minimal. Essential cookies are set by
-                default; analytics cookies are set only with your opt-in. The
-                analytics we run is anonymous and aggregated — no personally
-                identifiable information, no third-party advertising trackers.
-                See{" "}
+                This site sets zero cookies. Browser storage (localStorage /
+                sessionStorage) is minimal by default — the entries needed for
+                the site to function (theme preference, consent state, chat
+                history). Anonymous, opt-in analytics events are recorded only
+                with your permission. The analytics we run is anonymous and
+                aggregated — no personally identifiable information, no
+                third-party advertising trackers. See{" "}
                 <Link href="/privacy">the Privacy Policy</Link> for what
-                analytics we collect and how, and the cookie banner (footer)
+                analytics we collect and how, and the consent banner (footer)
                 to change your choice.
               </p>
             </BodySection>
@@ -277,43 +285,81 @@ export default function SecurityPage() {
                 ROHI SYSTEMS is committed to responsible, secure and
                 transparent technology practices. We design systems with
                 applicable Mozambican requirements and recognized security
-                principles in mind. The framework we track includes:
+                principles in mind. The framework we track, citing the
+                specific instruments in force:
               </p>
               <ul>
                 <li>
                   <strong className="font-semibold text-ink">
-                    Electronic Transactions Law (Law 3/2017).
+                    Lei n.º 3/2017 (Electronic Transactions Law).
                   </strong>{" "}
-                  The foundation for electronic signatures, records and
-                  transactions in Mozambique.
+                  In force. The foundation for electronic signatures, records
+                  and transactions in Mozambique. Articles 26, 30 and 35–37
+                  cover electronic contract formation and information
+                  obligations; Articles 63–65 cover the obligations of those
+                  who process personal data electronically (purpose
+                  specification, accuracy, security, data-subject rights).
                 </li>
                 <li>
-                  <strong className="font-semibold text-ink">INTIC.</strong>{" "}
-                  The national regulator for electronic systems. Our
-                  classification under INTIC is being determined. We do not
-                  claim a registration we have not been granted.
-                </li>
-                <li>
-                  <strong className="font-semibold text-ink">
-                    Cybersecurity Law &amp; Cybercrime Law (2026, in force).
-                  </strong>{" "}
-                  We design with these in view, including obligations relevant
-                  to operators of systems and to incident handling.
-                </li>
-                <li>
-                  <strong className="font-semibold text-ink">
-                    Pending Data Protection Law.
-                  </strong>{" "}
-                  Mozambique&apos;s standalone data protection framework is in
-                  development. We are designing around its expected principles
-                  now — not waiting for it to land.
+                  <strong className="font-semibold text-ink">INTIC licensing.</strong>{" "}
+                  Decreto n.º 59/2023 (as amended by Decreto n.º 44/2025,
+                  in force late December 2025) establishes the registration
+                  and licensing regime for intermediary service providers
+                  and digital platform operators. Whether ROHI falls in
+                  scope depends on its classification — a pure marketing
+                  website is likely NOT in scope; a SaaS hosting customer
+                  data likely IS. ROHI&apos;s specific classification is
+                  pending Mozambican counsel review.
                 </li>
                 <li>
                   <strong className="font-semibold text-ink">
-                    Cloud Computing &amp; Data Centre regulations.
+                    Lei n.º 13/2026 (Cybersecurity) &amp; Lei n.º 14/2026 (Cybercrime).
                   </strong>{" "}
-                  We reassess applicability per engagement when a deployment
-                  touches cloud or hosted infrastructure.
+                  Both dated 1 July 2026 and entered into force 29 September
+                  2026. Lei 13/2026 establishes the legal regime for
+                  cybersecurity (protection of data communication networks,
+                  information systems and critical infrastructures); Lei
+                  14/2026 establishes the criminal and procedural provisions
+                  for cybercrimes (electronic evidence, international
+                  cooperation). Specific security-control and incident-reporting
+                  obligations under Lei 13/2026 are under counsel review
+                  pending the published law text.
+                </li>
+                <li>
+                  <strong className="font-semibold text-ink">
+                    Decreto n.º 71/2025 (Data Centres) &amp; Decreto n.º 72/2025 (Cloud Computing).
+                  </strong>{" "}
+                  In force. Applicable to providers of data-centre and cloud
+                  services with activity in Mozambique. Decreto 72/2025
+                  includes breach-notification requirements for cloud
+                  providers (incident response plan, timely notification to
+                  affected entities and INTIC). We reassess applicability per
+                  engagement when a deployment touches cloud or hosted
+                  infrastructure.
+                </li>
+                <li>
+                  <strong className="font-semibold text-ink">
+                    Decreto n.º 14/2026 (CNIA).
+                  </strong>{" "}
+                  Establishes the National Commission for Artificial
+                  Intelligence. We monitor the AI regulatory framework it
+                  is shaping as it develops.
+                </li>
+                <li>
+                  <strong className="font-semibold text-ink">
+                    Pending data protection law.
+                  </strong>{" "}
+                  There is currently no single comprehensive data protection
+                  law in force in Mozambique. Privacy obligations come from
+                  the Constitution (notably Article 41 on the inviolability
+                  of private and family life, the home, correspondence and
+                  telecommunications), Lei n.º 3/2017 (Articles 63–65), the
+                  Penal Code, the Consumer Law and the Publicity Code, among
+                  others. A comprehensive Lei de Protecção de Dados Pessoais
+                  was approved by the Council of Ministers on 3 March 2026
+                  and is currently pending final vote in the Assembly of the
+                  Republic. We are designing around its expected principles
+                  now and will update this page when it is enacted.
                 </li>
               </ul>
               <p>

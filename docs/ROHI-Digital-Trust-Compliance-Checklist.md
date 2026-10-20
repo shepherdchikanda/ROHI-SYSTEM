@@ -58,7 +58,7 @@ These public pages exist and are grounded in what the site actually does:
 - `/terms` — Terms of Service (13 clauses incl. AI limitations & disclosure)
 - `/privacy` — Privacy Policy (10 sections, incl. a dedicated AI-assistant section)
 - `/cookies` — Cookie Policy (categories, durations, third parties, consent management)
-- `/ai-notice` — AI Assistant Notice (the 10-point AI privacy checklist)
+- `/ai-notice` — AI Assistant Notice (the 12-section AI privacy notice)
 - `/security` — Security & Data Protection (incl. an honest "Compliance approach" section that references the Mozambican framework without claiming validated compliance)
 - Cookie consent banner (Accept All / Reject Non-Essential / Manage Preferences)
 - Consent-gated analytics (no events recorded unless the visitor accepts)
@@ -113,7 +113,7 @@ the internal work (☐ open) is what remains.
   > management.
 
 - [x] **8. Draft AI Assistant Notice** ✅
-  > `/ai-notice` covers the 10-point AI privacy checklist + limitations +
+  > `/ai-notice` covers the 12-section AI privacy notice + limitations +
   > what not to share.
 
 - [ ] **9. Create the Client MSA/SOW framework** *(internal — not on the website)*
@@ -216,9 +216,10 @@ These are operational, not website content. Track separately.
 
 ### Website
 - [x] HTTPS (via gateway)
-- [ ] Secure headers (HSTS, CSP, X-Content-Type-Options, etc.) — verify at the gateway
+- [x] Secure headers (HSTS, CSP, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy) — set in `next.config.ts` at the application level
 - [x] Secure forms (validation server-side)
-- [ ] Bot/spam protection on the contact + assessment forms (hCaptcha/Turnstile or honeypot)
+- [x] Bot/spam protection on the contact form (honeypot — see `src/lib/honeypot.ts`)
+- [x] Bot/spam protection on the assessment form (honeypot — `isBot` check in `src/app/api/assessment/route.ts`)
 - [x] Minimal data collection
 - [x] Access controls (no visitor auth on marketing site)
 
@@ -256,10 +257,8 @@ These are operational, not website content. Track separately.
    review + MSA/SOW drafting.
 2. **Build the internal data map** (every system that touches data).
 3. **Write the internal AI governance policy.**
-4. **Add bot/spam protection** to public forms.
-5. **Verify gateway-level security headers.**
-6. **Define explicit retention periods** for each data category.
-7. **Document per-engagement security** in a standard template for client
+4. **Define explicit retention periods** for each data category.
+5. **Document per-engagement security** in a standard template for client
    projects.
 
 ---

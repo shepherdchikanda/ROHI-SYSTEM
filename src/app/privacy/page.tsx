@@ -14,7 +14,7 @@ import { SITE_CONFIG } from "@/lib/site-config";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How ROHI SYSTEMS collects, stores and uses information on this website — contact enquiries, the AI assistant, newsletter, analytics and cookies. Honest, scoped to what is actually implemented.",
+    "How ROHI SYSTEMS collects, stores and uses information on this website — contact enquiries, the AI assistant, newsletter, analytics and browser storage. Honest, scoped to what is actually implemented.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -95,7 +95,7 @@ export default function PrivacyPage() {
             <SubSection number="03" eyebrow="Data collection" title="What we collect.">
               <p>
                 We collect a small, deliberate set of information on this
-                website. There are five categories — and within each, only what
+                website. There are six categories — and within each, only what
                 the relevant feature actually needs.
               </p>
               <ul>
@@ -116,9 +116,11 @@ export default function PrivacyPage() {
                     Chatbot conversations.
                   </strong>{" "}
                   Messages you send to the ROHI assistant and the replies it
-                  generates are stored so the conversation can continue and so
-                  that, if you ask to be handed off to a person, our team has
-                  the context you already shared.
+                  generates are kept in your browser&apos;s local storage so the
+                  conversation can continue. If you ask to be handed off to a
+                  person, our team receives a summary and transcript so they have
+                  the context you already shared. See the AI assistant section
+                  below for what is and is not stored on our side.
                 </li>
                 <li>
                   <strong className="font-semibold text-ink">
@@ -131,7 +133,7 @@ export default function PrivacyPage() {
                   <strong className="font-semibold text-ink">
                     Analytics.
                   </strong>{" "}
-                  If you opt in via the cookie banner, we record anonymous,
+                  If you opt in via the consent banner, we record anonymous,
                   aggregated events (page views, outbound button clicks, form
                   submissions). No personally identifiable information is sent.
                   No third-party advertising or marketing trackers run on this
@@ -139,26 +141,42 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong className="font-semibold text-ink">
-                    Cookies.
+                    Assessment quiz.
                   </strong>{" "}
-                  Essential cookies only are set by default — the minimum
-                  needed for the site to function (including remembering your
-                  cookie consent choice). Analytics cookies are set only with
-                  your permission.
+                  The operations-maturity self-assessment records the answers
+                  you select, the resulting score, and the stage you land on.
+                  If you choose to leave your email for a personalized
+                  follow-up, that is recorded too. Email is optional — you can
+                  see your result without providing it. The purpose is
+                  self-assessment of organizational readiness, with optional
+                  follow-up from the ROHI team if you ask for it.
+                </li>
+                <li>
+                  <strong className="font-semibold text-ink">
+                    Browser storage.
+                  </strong>{" "}
+                  This site does not set cookies. It uses a small set of
+                  browser-storage entries (localStorage and sessionStorage) —
+                  the minimum needed for the site to function: remembering your
+                  theme preference and your consent choice. See{" "}
+                  <Link href="/cookies">the Cookies &amp; Storage Policy</Link>{" "}
+                  for the full list of keys and what each one is for.
                 </li>
               </ul>
             </SubSection>
 
             <SubSection number="04" eyebrow="Storage" title="How we store it.">
               <p>
-                Enquiries, newsletter subscriptions and chat transcripts handed
-                off to our team are stored in a local SQLite database on our own
-                server. We do not sell, rent or trade the information you submit
-                here. The only external flow is to the large language model (LLM)
-                API that powers the chatbot — your messages are transmitted to
-                that provider so it can generate replies. See the AI assistant
-                section below and the Third-party services section for what that
-                means in practice.
+                Enquiries, newsletter subscriptions, assessment results and chat
+                transcripts handed off to our team are stored in a local SQLite
+                database on our own server. We do not sell, rent or trade the
+                information you submit here. There are two external flows: the
+                large language model (LLM) API that powers the chatbot (your
+                messages are transmitted to that provider so it can generate
+                replies), and Google Fonts (loaded in your browser from
+                Google&apos;s CDN — see the Third-party services section). See the
+                AI assistant section below and the Third-party services section
+                for what that means in practice.
               </p>
             </SubSection>
 
@@ -191,7 +209,7 @@ export default function PrivacyPage() {
               title="Third-party services."
             >
               <p>
-                Three third-party services are involved in how this site works:
+                Four third-party services are involved in how this site works:
               </p>
               <ul>
                 <li>
@@ -204,6 +222,30 @@ export default function PrivacyPage() {
                   practices — what they keep, and for how long, is governed by
                   their terms. We pass only the conversation needed to produce a
                   useful reply.
+                </li>
+                <li>
+                  <strong className="font-semibold text-ink">
+                    Google Fonts.
+                  </strong>{" "}
+                  The Manrope and JetBrains Mono typefaces used across this
+                  site are loaded from Google&apos;s Fonts CDN
+                  (fonts.googleapis.com and fonts.gstatic.com) via a{" "}
+                  &lt;link&gt; tag in the page. The CSS request to
+                  fonts.googleapis.com does not set tracking cookies, but the
+                  font files served from fonts.gstatic.com are delivered from
+                  Google&apos;s infrastructure, which may log visitor IP
+                  addresses as part of normal web delivery. No Google
+                  advertising or analytics trackers run on this site.
+                </li>
+                <li>
+                  <strong className="font-semibold text-ink">
+                    Resend (email — conditional, dormant).
+                  </strong>{" "}
+                  If email notifications are enabled, contact-form submissions
+                  trigger an email to the ROHI team (via Resend, a third-party
+                  email service) and an auto-reply to the visitor&apos;s email
+                  address. This is currently dormant — no emails are sent until
+                  the service is configured.
                 </li>
                 <li>
                   <strong className="font-semibold text-ink">WhatsApp.</strong>{" "}
@@ -288,17 +330,18 @@ export default function PrivacyPage() {
               </p>
             </SubSection>
 
-            <SubSection number="08" eyebrow="Cookies" title="Cookies.">
+            <SubSection number="08" eyebrow="Storage" title="Browser storage &amp; consent.">
               <p>
-                Essential cookies are set by default — the minimum needed for
-                the site to function, including remembering your cookie consent
-                choice. Analytics cookies are set only if you opt in via the
-                cookie banner. We do not run marketing cookies or advertising
-                trackers. See{" "}
-                <Link href="/cookies">the Cookies Policy</Link> for the full
-                detail, including the list of cookies and their purpose. You can
-                change your choice at any time using the cookie preferences
-                button in the footer.
+                This site does not set cookies. Essential browser storage
+                (localStorage / sessionStorage) is used by default — the
+                minimum needed for the site to function, including remembering
+                your theme preference and your consent choice. Anonymous
+                analytics events are recorded only if you opt in via the consent
+                banner. We do not run marketing cookies or advertising trackers.
+                See <Link href="/cookies">the Cookies &amp; Storage Policy</Link>{" "}
+                for the full detail, including the list of storage keys and their
+                purpose. You can change your choice at any time using the
+                consent preferences button in the footer.
               </p>
             </SubSection>
 
@@ -323,7 +366,26 @@ export default function PrivacyPage() {
               </p>
             </SubSection>
 
-            <SubSection number="10" eyebrow="Children" title="Children.">
+            <SubSection number="10" eyebrow="Legal basis" title="The legal backdrop in Mozambique.">
+              <p>
+                Mozambique does not currently have a single comprehensive data
+                protection law in force. Privacy obligations here come from a
+                patchwork of sources — the Constitution (notably Article 41 on
+                the inviolability of private and family life, the home,
+                correspondence and telecommunications), Lei n.º 3/2017 (the
+                Electronic Transactions Law, in particular Articles 63–65 on
+                the obligations of those who process personal data
+                electronically), the Penal Code, the Consumer Law and the
+                Publicity Code, among others. A comprehensive data protection
+                law was approved by the Council of Ministers on 3 March 2026 and
+                is currently pending final vote in the Assembly of the Republic.
+                Until it is enacted, ROHI operates against the patchwork above
+                and will update this policy and its internal framework when the
+                new law comes into force.
+              </p>
+            </SubSection>
+
+            <SubSection number="11" eyebrow="Children" title="Children.">
               <p>
                 This website is not intended for anyone under 16. We do not
                 knowingly collect information from minors. If you believe a
@@ -332,7 +394,7 @@ export default function PrivacyPage() {
               </p>
             </SubSection>
 
-            <SubSection number="11" eyebrow="Changes" title="Changes to this policy.">
+            <SubSection number="12" eyebrow="Changes" title="Changes to this policy.">
               <p>
                 We may update this policy as the website evolves. The{" "}
                 <em>Last revised</em> date at the top of this page reflects the
@@ -341,7 +403,7 @@ export default function PrivacyPage() {
               </p>
             </SubSection>
 
-            <SubSection number="12" eyebrow="Contact" title="Contact.">
+            <SubSection number="13" eyebrow="Contact" title="Contact.">
               <p>
                 Questions about this policy, or about information we hold about
                 you? Contact us through{" "}

@@ -47,11 +47,11 @@ export default function AiNoticePage() {
               <p>The assistant is powered by a large language model (LLM) provided by a third-party AI service. To generate a reply, the messages you send are transmitted to that API, which processes them and returns a response. The system prompt instructs the assistant to use ROHI&apos;s confirmed knowledge base as its source of truth and to refuse to invent information beyond it.</p>
             </SubSection>
             <SubSection number="04" eyebrow="Storage" title="Whether conversations are stored">
-              <p>Conversation history is stored in <span className="font-medium text-ink">your browser&apos;s local storage</span> only — so you can resume a conversation on a return visit. It does not leave your device unless you take an action.</p>
+              <p>Conversation history is stored in <span className="font-medium text-ink">your browser&apos;s local storage</span> only — so you can resume a conversation on a return visit. ROHI does not store your conversation on its side unless you take an action. However, the messages you send are transmitted to the AI model provider on each turn to generate replies — this is how the assistant works. Treat each message you send as leaving your device, because it does.</p>
               <p>If you click <span className="font-medium text-ink">&quot;Start a Conversation&quot;</span> in the chat, a summary and the transcript of the conversation are saved to ROHI&apos;s database so the team has the context. If you never hand off, no transcript is saved on our side.</p>
             </SubSection>
             <SubSection number="05" eyebrow="Retention" title="How long conversations are retained">
-              <p>Your browser&apos;s local copy persists until you clear browser data or use the &quot;Reset&quot; button in the chat. Transcripts saved on handoff are kept until you request deletion, or until they are no longer needed for the enquiry they relate to.</p>
+              <p>Your browser&apos;s local copy of the conversation auto-expires after 48 hours. You can also clear it immediately with the &quot;Reset&quot; button in the chat, or by clearing browser storage. Transcripts saved on handoff are kept until you request deletion, or until they are no longer needed for the enquiry they relate to.</p>
             </SubSection>
             <SubSection number="06" eyebrow="Human review" title="Whether humans can review conversations">
               <p>Yes — when you hand off to start a conversation, the ROHI team reads the summary and transcript so they can follow up with the full context. No one at ROHI reads your conversations without you initiating that handoff.</p>
