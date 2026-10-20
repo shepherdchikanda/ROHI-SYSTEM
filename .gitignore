@@ -70,3 +70,17 @@ test-retrieval.ts
 verify-retrieval.ts
 verify-followup.ts
 upload/
+
+# Dev + test scripts (never push)
+final-regression-test.ts
+*.test.ts
+tests/
+tool-results/
+.zscripts/
+scripts/
+stage3-*.ts
+run-full-test.ts
+test-*.ts
+verify-*.ts
+*.mjs
+upload/
