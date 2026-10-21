@@ -78,3 +78,8 @@ baseline-*.mjs
 # platform skill docs (environment artifact, not project code)
 skills/
 
+
+# internal audit/agent notes (not for public repo)
+agent-ctx/
+legal-research/
+worklog.md

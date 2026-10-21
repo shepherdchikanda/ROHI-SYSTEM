@@ -6,7 +6,13 @@ import { checkRateLimit, LIMITS } from "@/lib/rate-limit";
 import ZAI from "z-ai-web-dev-sdk";
 
 const messageSchema = z.object({
-  role: z.enum(["system", "user", "assistant"]),
+  // SECURITY: Only accept user + assistant roles from the client.
+  // The system prompt (ROHI_AGENT_SYSTEM_PROMPT + KB) is added SERVER-SIDE
+  // and never accepted from the client. This prevents:
+  //   - Prompt injection (a visitor overriding the assistant's instructions)
+  //   - Abuse of the endpoint as a free AI proxy (sending arbitrary system
+  //     prompts to generate any content)
+  role: z.enum(["user", "assistant"]),
   content: z.string().max(8000),
 });
 

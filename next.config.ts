@@ -16,14 +16,20 @@ const nextConfig: NextConfig = {
   ],
   async headers() {
     // Content Security Policy.
-    // NOTE: 'unsafe-eval' is required for Next.js dev mode (HMR / React Refresh).
-    // For a production deployment, remove 'unsafe-eval' and consider using
-    // per-request nonces for inline scripts to also drop 'unsafe-inline'.
-    // 'unsafe-inline' (style-src) is required by Tailwind's runtime styles +
-    // Framer Motion inline styles.
+    // 'unsafe-eval' is required for Next.js dev mode (HMR / React Refresh).
+    // In production we drop it so the page cannot load code via eval —
+    // a meaningful hardening against XSS-driven code injection.
+    // 'unsafe-inline' (script-src + style-src) is required by Next.js
+    // inline hydration scripts + Tailwind/Framer Motion inline styles.
+    // To also drop 'unsafe-inline' for scripts, use per-request nonces
+    // (Next.js nonce support) in a production deployment.
+    const isDev = process.env.NODE_ENV !== 'production';
+    const scriptSrc = isDev
+      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+      : "script-src 'self' 'unsafe-inline'";
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      scriptSrc,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",

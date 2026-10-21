@@ -50,7 +50,7 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      # next.config.ts sets typescript.ignoreBuildErrors = true, so `next build` never
+      # next.config.ts sets typescript.ignoreBuildErrors = false, so `next build`
       # type-checks. This step is the ONLY type gate. It starts non-blocking so existing
       # errors don't stop you; once it is clean, set repo variable TYPECHECK_BLOCKING=true.
       - name: Type check

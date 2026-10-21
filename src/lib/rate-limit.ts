@@ -38,12 +38,27 @@ export function rateLimit(
   return { allowed: true, remaining: max - entry.count, resetAt: entry.resetTime };
 }
 
-/** Extract the client IP from request headers. */
+/** Extract the client IP from request headers.
+ *
+ * SECURITY: Only trusts forwarded headers when behind a known proxy.
+ * In production behind Caddy/Nginx/etc, set TRUST_PROXY=1 so the
+ * X-Forwarded-For header is used (the proxy strips spoofed values).
+ * Without TRUST_PROXY, falls back to X-Real-IP then 'unknown' — which
+ * means direct connections (no proxy) still get rate-limited per-IP,
+ * but a visitor cannot fake the header to bypass limits.
+ */
 export function getClientIP(req: Request): string {
-  const forwarded = req.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
-  const real = req.headers.get("x-real-ip");
-  if (real) return real;
+  const trustProxy = process.env.TRUST_PROXY === "1" || process.env.NODE_ENV !== "production";
+  if (trustProxy) {
+    const forwarded = req.headers.get("x-forwarded-for");
+    if (forwarded) {
+      // X-Forwarded-For is "client, proxy1, proxy2". The client is first.
+      // Only the FIRST hop is the visitor; the rest are trusted proxies.
+      return forwarded.split(",")[0].trim();
+    }
+    const real = req.headers.get("x-real-ip");
+    if (real) return real.trim();
+  }
   return "unknown";
 }
 
