@@ -3,6 +3,14 @@
  * Works for local dev + single-server deployments.
  * For Vercel serverless production, upgrade to Upstash Redis
  * (free tier — see https://docs.upstash.com/redis/sdts/ratelimit)
+ *
+ * TRUSTED-PROXY NOTE: getClientIP() reads the `x-forwarded-for` header.
+ * This is ONLY safe when the server sits behind a trusted reverse proxy
+ * (e.g. Caddy, nginx, Vercel's edge) that OVERWRITES this header with the
+ * real client IP. If the server is exposed directly to the internet, an
+ * attacker can forge this header to bypass rate limiting. The included
+ * Caddyfile sets the header correctly. If you deploy elsewhere, ensure
+ * your proxy strips/overwrites `x-forwarded-for` before forwarding.
  */
 
 type RateEntry = { count: number; resetTime: number };

@@ -69,7 +69,6 @@ verify-followup.ts
 upload/
 
 baseline-*.mjs
-*.mjs
 
 # venv / caches
 .caches/
